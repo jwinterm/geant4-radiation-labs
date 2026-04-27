@@ -23,12 +23,12 @@ No prior Geant4 or medical-physics knowledge is assumed.
 ## The labs
 
 1. **[Lab 1 — Setting Up Linux and Building Geant4](lab1_setup/lab1.qmd)**
-   Install Ubuntu in a virtual machine and build Geant4 from source with Qt visualisation support.
+   Install Ubuntu in a virtual machine and build Geant4 from source with Qt visualization support.
 
 2. **[Lab 2 — First Simulation: Building and Running B1](lab2_exampleB1/lab2.qmd)**
    Compile Geant4's B1 example, run it interactively (Qt GUI) and in batch mode via macros, and modify the particle, energy, and event count.
 
-3. **[Lab 3 — Acquiring and Analysing Simulation Data](lab3_modifyB1/lab3.qmd)**
+3. **[Lab 3 — Acquiring and Analyzing Simulation Data](lab3_modifyB1/lab3.qmd)**
    Patch B1's C++ to write per-event energy data to CSV via `G4AnalysisManager`, then load it in Python with pandas and produce histograms, statistics, and per-particle comparisons.
 
 4. **[Lab 4 — A PET Scanner](lab4_exampleB3/lab4.qmd)**
@@ -41,7 +41,7 @@ By the end of the series you will have:
 - A reproducible Geant4 + Python development environment
 - Modified Geant4 applications that emit clean CSV data
 - Python scripts that compute statistics and produce publication-style plots
-- A working understanding of the **simulate → save → analyse → visualise** loop that underlies most computational physics
+- A working understanding of the **simulate → save → analyze → visualize** loop that underlies most computational physics
 
 ## Acknowledgements
 
