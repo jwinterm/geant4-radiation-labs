@@ -262,7 +262,7 @@ Now let's compile your modified code and generate some data!
 
    Add these contents:
 
-   ```
+   ```default
    # Lab 3 Data Collection Run
    # Simulate 10,000 events with default 6 MeV gammas
 
@@ -575,7 +575,8 @@ Let's generate data for different particles and compare their energy deposition 
    ```
 
    Add:
-   ```
+
+   ```default
    /run/numberOfThreads 1
    /run/initialize
    /gun/particle proton
@@ -591,7 +592,8 @@ Let's generate data for different particles and compare their energy deposition 
    ```
 
    Add:
-   ```
+
+   ```default
    /run/numberOfThreads 1
    /run/initialize
    /gun/particle e-

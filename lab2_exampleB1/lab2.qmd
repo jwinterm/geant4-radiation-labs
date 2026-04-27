@@ -255,22 +255,22 @@ The real power of Geant4 is the ability to easily change simulation parameters u
 
 2. Add the following commands to your macro file:
 
-   ```
+   ```default
    # My custom run for Lab 2
    # Author: [Your Name]
-   
+
    # Initialize the kernel
    /run/initialize
-   
+
    # Set the particle to a proton
    /gun/particle proton
-   
+
    # Set the proton's kinetic energy to 150 MeV
    /gun/energy 150 MeV
-   
+
    # Print progress every 100 events
    /run/printProgress 100
-   
+
    # Run 1000 events
    /run/beamOn 1000
    ```
@@ -292,7 +292,7 @@ Let's create additional macro files to explore different simulation scenarios:
 
 1. Create a macro for electron simulation (`electron_beam.mac`):
 
-   ```
+   ```default
    /run/initialize
    /gun/particle e-
    /gun/energy 50 MeV
@@ -301,7 +301,7 @@ Let's create additional macro files to explore different simulation scenarios:
 
 2. Create a macro for neutron simulation (`neutron_beam.mac`):
 
-   ```
+   ```default
    /run/initialize
    /gun/particle neutron
    /gun/energy 14 MeV

@@ -164,7 +164,7 @@ That is the only file you need to edit. `EventAction.cc` is left untouched — t
 
    Add:
 
-   ```
+   ```default
    # Lab 4: PET scanner data run
 
    # Force single-threaded mode so we get ONE CSV file, not one per worker.
