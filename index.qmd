@@ -1,0 +1,60 @@
+---
+title: "Geant4 Radiation Labs"
+subtitle: "A hands-on intro to Monte Carlo radiation simulation and analysis"
+author: "John Murphy and Steven Carlson"
+---
+
+## What this is
+
+A four-lab series that takes you from a fresh Linux install to a working PET-scanner simulation, using [Geant4](https://geant4.web.cern.ch/) for the physics and Python (pandas, matplotlib) for analysis.
+
+The labs are designed to be done in order. Each one builds on the environment, code, and analysis idioms of the previous one.
+
+## Audience
+
+Upper-level undergraduates or early graduate students with:
+
+- Comfort with the Linux command line
+- Some C++ literacy (you don't need to write much; you'll mostly read and patch)
+- Some Python literacy (you'll write short analysis scripts)
+
+No prior Geant4 or medical-physics knowledge is assumed.
+
+## The labs
+
+1. **[Lab 1 — Setting Up Linux and Building Geant4](lab1_setup/lab1.qmd)**
+   Install Ubuntu in a virtual machine and build Geant4 from source with Qt visualisation support.
+
+2. **[Lab 2 — First Simulation: Building and Running B1](lab2_exampleB1/lab2.qmd)**
+   Compile Geant4's B1 example, run it interactively (Qt GUI) and in batch mode via macros, and modify the particle, energy, and event count.
+
+3. **[Lab 3 — Acquiring and Analysing Simulation Data](lab3_modifyB1/lab3.qmd)**
+   Patch B1's C++ to write per-event energy data to CSV via `G4AnalysisManager`, then load it in Python with pandas and produce histograms, statistics, and per-particle comparisons.
+
+4. **[Lab 4 — A PET Scanner](lab4_exampleB3/lab4.qmd)**
+   Apply the same workflow to Geant4's B3a (Positron Emission Tomography) example. Identify the 511 keV photopeak in the energy spectrum, find true coincidences, and reconstruct lines of response.
+
+## What you'll build
+
+By the end of the series you will have:
+
+- A reproducible Geant4 + Python development environment
+- Modified Geant4 applications that emit clean CSV data
+- Python scripts that compute statistics and produce publication-style plots
+- A working understanding of the **simulate → save → analyse → visualise** loop that underlies most computational physics
+
+## Source and PDFs
+
+The full lab source — `.qmd` files, screenshots, and the Python scripts that generate the conceptual diagrams — lives at <https://github.com/jwinterm/geant4-radiation-labs>.
+
+PDFs of any lab can be regenerated locally with Quarto:
+
+```bash
+quarto render lab1_setup/lab1.qmd --to pdf
+```
+
+## Citing
+
+If this series is useful in your teaching or work, please cite as:
+
+> Murphy, J. and Carlson, S. (2025). *Geant4 Radiation Labs.* <https://jwinterm.github.io/geant4-radiation-labs/>

@@ -1,0 +1,26 @@
+# Claude harness
+.claude/
+
+# Local working directories with copies of Geant4 source / build artefacts
+# (do not redistribute Geant4 example sources).
+lab*files/
+
+# Third-party PDFs and personal/conference materials
+literature/
+reports/
+
+# Old alternate versions of the labs
+*_gem.qmd
+*_gem.pdf
+
+# Quarto build outputs
+_site/
+.quarto/
+*.html
+*.pdf
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+/.quarto/

@@ -1,0 +1,54 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - "index.qmd"
+    - "lab1_setup/lab1.qmd"
+    - "lab2_exampleB1/lab2.qmd"
+    - "lab3_modifyB1/lab3.qmd"
+    - "lab4_exampleB3/lab4.qmd"
+
+website:
+  title: "Geant4 Radiation Labs"
+  description: "Hands-on Geant4 simulation labs for medical physics."
+  page-navigation: true
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - text: "Lab 1: Setup"
+        href: lab1_setup/lab1.qmd
+      - text: "Lab 2: B1"
+        href: lab2_exampleB1/lab2.qmd
+      - text: "Lab 3: Modify B1"
+        href: lab3_modifyB1/lab3.qmd
+      - text: "Lab 4: PET (B3a)"
+        href: lab4_exampleB3/lab4.qmd
+    right:
+      - icon: github
+        href: https://github.com/jwinterm/geant4-radiation-labs
+        aria-label: GitHub repo
+  sidebar:
+    style: "docked"
+    search: true
+    contents:
+      - href: index.qmd
+        text: Introduction
+      - section: "Labs"
+        contents:
+          - lab1_setup/lab1.qmd
+          - lab2_exampleB1/lab2.qmd
+          - lab3_modifyB1/lab3.qmd
+          - lab4_exampleB3/lab4.qmd
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+    toc-location: right
+    code-copy: true
+    code-overflow: wrap
+    code-block-bg: true
+    fig-cap-location: bottom
+    link-external-newwindow: true
