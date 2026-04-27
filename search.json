@@ -1,0 +1,799 @@
+[
+  {
+    "objectID": "lab4_exampleB3/lab4.html",
+    "href": "lab4_exampleB3/lab4.html",
+    "title": "Lab 4: Medical Physics Application - A PET Scanner",
+    "section": "",
+    "text": "In this final lab, you will apply all the skills you have developed to a more complex and realistic application: a Positron Emission Tomography (PET) scanner. By the end of this session, you will be able to:\n\nExplain the basic operating principle of a PET scanner\nCompile and visualize a complex multi-volume detector geometry\nUse Geant4’s primitive scorer / hits-collection system to record per-crystal energy deposits\nGenerate and interpret an energy spectrum from a simulated radiation detector\nIdentify a “photopeak” and connect it to the underlying physics\nReconstruct the spatial arrangement of detector hits and identify coincident events\nDraw “lines of response” connecting coincident hits, the building block of PET image reconstruction",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 4: Medical Physics Application - A PET Scanner"
+    ]
+  },
+  {
+    "objectID": "lab4_exampleB3/lab4.html#learning-objectives",
+    "href": "lab4_exampleB3/lab4.html#learning-objectives",
+    "title": "Lab 4: Medical Physics Application - A PET Scanner",
+    "section": "",
+    "text": "In this final lab, you will apply all the skills you have developed to a more complex and realistic application: a Positron Emission Tomography (PET) scanner. By the end of this session, you will be able to:\n\nExplain the basic operating principle of a PET scanner\nCompile and visualize a complex multi-volume detector geometry\nUse Geant4’s primitive scorer / hits-collection system to record per-crystal energy deposits\nGenerate and interpret an energy spectrum from a simulated radiation detector\nIdentify a “photopeak” and connect it to the underlying physics\nReconstruct the spatial arrangement of detector hits and identify coincident events\nDraw “lines of response” connecting coincident hits, the building block of PET image reconstruction",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 4: Medical Physics Application - A PET Scanner"
+    ]
+  },
+  {
+    "objectID": "lab4_exampleB3/lab4.html#introduction",
+    "href": "lab4_exampleB3/lab4.html#introduction",
+    "title": "Lab 4: Medical Physics Application - A PET Scanner",
+    "section": "Introduction",
+    "text": "Introduction\nPositron Emission Tomography (PET) is a medical imaging technique used to visualize metabolic processes in the body, especially in oncology. The patient is given a radiotracer such as Fluorine-18 (F-18), a positron-emitting isotope. When an F-18 nucleus decays, it emits a positron. The positron travels a very short distance through tissue before encountering an electron, and the matter–antimatter pair annihilates, converting their rest mass into two gamma-ray photons.\n\n\n\nPositron Annihilation Diagram\n\n\nTo conserve momentum, the two photons fly off in nearly opposite directions, and each has an energy of 511 keV — the rest mass energy of an electron. A PET scanner is essentially a ring of scintillator detectors designed to detect these photon pairs arriving at almost the same time (in “coincidence”). By recording many such pairs and tracing the line connecting each pair back through the patient, a computer reconstructs an image of where the tracer accumulated.\nIn this lab, we use Geant4 Example B3a, a simplified PET scanner simulation. Our goal is to:\n\nRecord the energy deposited in each scintillator crystal for every event.\nPlot an energy spectrum and identify the 511 keV photopeak — the signature of a gamma ray fully absorbed by a single crystal.\nFind events with two photopeak hits in coincidence and draw the lines of response (LOR) that connect them.",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 4: Medical Physics Application - A PET Scanner"
+    ]
+  },
+  {
+    "objectID": "lab4_exampleB3/lab4.html#prerequisites",
+    "href": "lab4_exampleB3/lab4.html#prerequisites",
+    "title": "Lab 4: Medical Physics Application - A PET Scanner",
+    "section": "Prerequisites",
+    "text": "Prerequisites\n\nCompleted Lab 3 (familiarity with G4AnalysisManager, pandas, and matplotlib)\nBasic understanding of beta-plus decay and electron-positron annihilation\nC++ and Python environments configured from previous labs",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 4: Medical Physics Application - A PET Scanner"
+    ]
+  },
+  {
+    "objectID": "lab4_exampleB3/lab4.html#pre-lab-questions",
+    "href": "lab4_exampleB3/lab4.html#pre-lab-questions",
+    "title": "Lab 4: Medical Physics Application - A PET Scanner",
+    "section": "Pre-Lab Questions",
+    "text": "Pre-Lab Questions\n\nWhat is positron-electron annihilation, and why does it produce two photons rather than one?\nWhat is the energy of each annihilation photon, and why is this specific energy important for PET?\nIn a detector energy spectrum, what does the “photopeak” represent? What is the “Compton continuum”?\nWhy does PET imaging rely on detecting two photons in coincidence rather than one at a time?",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 4: Medical Physics Application - A PET Scanner"
+    ]
+  },
+  {
+    "objectID": "lab4_exampleB3/lab4.html#step-1-set-up-and-compile-the-b3a-example",
+    "href": "lab4_exampleB3/lab4.html#step-1-set-up-and-compile-the-b3a-example",
+    "title": "Lab 4: Medical Physics Application - A PET Scanner",
+    "section": "Step 1: Set Up and Compile the B3a Example",
+    "text": "Step 1: Set Up and Compile the B3a Example\nThe B3 example contains two sub-projects, B3a and B3b. They share geometry and physics, but differ in how event-level statistics are accumulated. We will use B3a.\n\nCreate a lab directory and copy the B3 source tree into it:\nmkdir -p ~/g4-labs/lab4\ncd ~/g4-labs/lab4\ncp -r ~/geant4-v11.3.2/examples/basic/B3 .\ncd B3/B3a\nCreate a build directory and configure with CMake:\nmkdir build\ncd build\ncmake ..\nCompile the application:\nmake -j$(nproc)\nThe executable will be named exampleB3a.",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 4: Medical Physics Application - A PET Scanner"
+    ]
+  },
+  {
+    "objectID": "lab4_exampleB3/lab4.html#step-2-visualize-the-pet-scanner-geometry",
+    "href": "lab4_exampleB3/lab4.html#step-2-visualize-the-pet-scanner-geometry",
+    "title": "Lab 4: Medical Physics Application - A PET Scanner",
+    "section": "Step 2: Visualize the PET Scanner Geometry",
+    "text": "Step 2: Visualize the PET Scanner Geometry\nBefore running a long simulation, look at the detector to understand what we are simulating.\n\nRun the application in interactive mode:\n./exampleB3a\nThe Qt GUI will open. The geometry is more complex than B1: rings of scintillator crystals surround a central cylinder representing a patient phantom.\n\n\n\nB3 PET Scanner Geometry\n\n\nFire a few events to see particles produced by F-18 decay:\n/run/beamOn 5\nYou should see positron tracks (short, in the phantom) followed by pairs of gamma tracks heading to opposite sides of the ring.\nRotate the view to confirm the ring geometry, then exit the GUI:\nexit",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 4: Medical Physics Application - A PET Scanner"
+    ]
+  },
+  {
+    "objectID": "lab4_exampleB3/lab4.html#step-3-modify-the-c-code-to-record-crystal-hits",
+    "href": "lab4_exampleB3/lab4.html#step-3-modify-the-c-code-to-record-crystal-hits",
+    "title": "Lab 4: Medical Physics Application - A PET Scanner",
+    "section": "Step 3: Modify the C++ Code to Record Crystal Hits",
+    "text": "Step 3: Modify the C++ Code to Record Crystal Hits\nB3a already uses Geant4’s primitive scorer system. In DetectorConstruction.cc, a G4MultiFunctionalDetector named crystal is attached to each crystal volume, with a G4PSEnergyDeposit primitive scorer named edep. There is also a similar scorer for the patient phantom (patient/dose).\nWhat you may not realise is that B3a’s exampleB3a.cc already creates a G4ScoreNtupleWriter and calls SetNtupleMerging(true) on it. This means the framework will automatically write a per-event ntuple for each primitive scorer — including event ID, crystal cell ID, and energy deposit — as soon as we hand it an open output file. We don’t have to write our own EndOfEventAction loop, define our own ntuple, or fill any rows ourselves.\nIn modern Geant4, B3a’s action classes (RunAction, EventAction, ActionInitialization) live inside namespace B3a, and the shared geometry/physics classes live inside namespace B3. The header and source files do not carry a B3a filename prefix. Every code addition you make below will go inside an existing namespace B3a { ... } block.\nSo the entire C++ change in this lab is six new lines in one file: tell the analysis manager to use CSV, open an output file in BeginOfRunAction, and write/close it in EndOfRunAction. That’s it.\n\nModification: RunAction.cc\n\nOpen src/RunAction.cc:\ngedit src/RunAction.cc &\nAdd the analysis-manager header at the top, near the other #include lines:\n#include \"G4AnalysisManager.hh\"\nInside RunAction::BeginOfRunAction(const G4Run*), add at the top of the function body:\n// --- Lab 4 addition: route the framework's score-ntuple output to CSV\nauto analysisManager = G4AnalysisManager::Instance();\nanalysisManager-&gt;SetDefaultFileType(\"csv\");\nanalysisManager-&gt;OpenFile(\"B3_output\");\nInside RunAction::EndOfRunAction(const G4Run*), add at the very end of the function:\n// --- Lab 4 addition: flush and close the CSV\nauto analysisManager = G4AnalysisManager::Instance();\nanalysisManager-&gt;Write();\nanalysisManager-&gt;CloseFile();\n\nThat is the only file you need to edit. EventAction.cc is left untouched — the framework’s G4ScoreNtupleWriter fills the ntuples automatically once a file is open.",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 4: Medical Physics Application - A PET Scanner"
+    ]
+  },
+  {
+    "objectID": "lab4_exampleB3/lab4.html#step-4-compile-run-and-inspect-the-output",
+    "href": "lab4_exampleB3/lab4.html#step-4-compile-run-and-inspect-the-output",
+    "title": "Lab 4: Medical Physics Application - A PET Scanner",
+    "section": "Step 4: Compile, Run, and Inspect the Output",
+    "text": "Step 4: Compile, Run, and Inspect the Output\n\nRe-compile your modified application:\ncd build\nmake -j$(nproc)\nIf you encounter errors, double-check brace placement, semicolons, and that your additions are inside the correct function.\nCreate a macro file lab4.mac in the B3a directory (one level up from build):\ncd ..\nnano lab4.mac\nAdd:\n# Lab 4: PET scanner data run\n\n# Force single-threaded mode so we get ONE CSV file, not one per worker.\n# Must come BEFORE /run/initialize. (Same trick as Lab 3.)\n/run/numberOfThreads 1\n\n/run/initialize\n/run/printProgress 5000\n/run/beamOn 50000\nRun the simulation in batch mode:\ncd build\n./exampleB3a ../lab4.mac\nThis will take a few minutes depending on your hardware.\nVerify the output:\nls -lh *.csv\nhead B3_output_nt_crystal_edep_t0.csv\nYou will see several CSV files. The framework writes one ntuple per primitive scorer:\n\nB3_output_nt_crystal_edep_t0.csv — the file we want. Three columns: crystal_edep_eventId, crystal_edep_cell (the crystal copy number), and crystal_edep_score (the energy deposit in MeV).\nB3_output_nt_patient_dose_t0.csv — patient-phantom dose data. We don’t use it in this lab.\nThe same names without the _t0 suffix are master-thread placeholders containing only headers; you can ignore (or rm) them.\n\nThe first line of B3_output_nt_crystal_edep_t0.csv after the #-prefixed metadata should look like 0,1,0.510999 — event 0, crystal 1, ~511 keV deposited (the photopeak signal we are about to plot).",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 4: Medical Physics Application - A PET Scanner"
+    ]
+  },
+  {
+    "objectID": "lab4_exampleB3/lab4.html#step-5-plot-the-energy-spectrum",
+    "href": "lab4_exampleB3/lab4.html#step-5-plot-the-energy-spectrum",
+    "title": "Lab 4: Medical Physics Application - A PET Scanner",
+    "section": "Step 5: Plot the Energy Spectrum",
+    "text": "Step 5: Plot the Energy Spectrum\nNow we switch to Python for analysis. We will plot the distribution of Edep across all hits and look for the 511 keV photopeak.\nIn your B3a/build directory, create analyze_spectrum.py:\nnano analyze_spectrum.py\nPaste the following content (must start at column 0 — no leading whitespace):\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\n# Geant4's CSV begins with metadata lines starting with '#'. We skip those\n# and supply our own column names matching the C++ ntuple definition.\ndata = pd.read_csv('B3_output_nt_crystal_edep_t0.csv',\n                   comment='#', header=None,\n                   names=['EventID', 'CrystalID', 'Edep'])\ndata['Edep_keV'] = data['Edep'] * 1000.0\n\nprint(f\"Total hits recorded: {len(data)}\")\nprint(f\"Unique events with at least one hit: {data['EventID'].nunique()}\")\nprint(f\"Mean Edep:   {data['Edep_keV'].mean():.2f} keV\")\nprint(f\"Median Edep: {data['Edep_keV'].median():.2f} keV\")\n\nplt.figure(figsize=(11, 6))\nplt.hist(data['Edep_keV'], bins=350, range=(0, 700),\n         color='steelblue', alpha=0.8, edgecolor='black', linewidth=0.3)\nplt.axvline(511, color='red', linestyle='--', linewidth=1.5,\n            label='Expected photopeak: 511 keV')\n\nplt.title('PET Detector Crystal Energy Spectrum')\nplt.xlabel('Energy Deposited per Hit (keV)')\nplt.ylabel('Counts')\nplt.legend()\nplt.grid(True, alpha=0.3)\nplt.tight_layout()\nplt.savefig('pet_spectrum.png', dpi=200)\nprint(\"Spectrum saved to pet_spectrum.png\")\nRun it:\npython3 analyze_spectrum.py\neog pet_spectrum.png\nYou should see a sharp peak near 511 keV (the photopeak) sitting on top of a broader, lower-energy distribution (the Compton continuum).\n\n\n\nPET Energy Spectrum",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 4: Medical Physics Application - A PET Scanner"
+    ]
+  },
+  {
+    "objectID": "lab4_exampleB3/lab4.html#step-6-coincidence-analysis-and-lines-of-response",
+    "href": "lab4_exampleB3/lab4.html#step-6-coincidence-analysis-and-lines-of-response",
+    "title": "Lab 4: Medical Physics Application - A PET Scanner",
+    "section": "Step 6: Coincidence Analysis and Lines of Response",
+    "text": "Step 6: Coincidence Analysis and Lines of Response\nA single 511 keV hit tells us nothing about where the positron decayed. The PET imaging signal comes from coincidence: two photopeak hits, in the same event, on opposite sides of the detector ring. The line connecting the two hit crystals — the line of response (LOR) — passes through the decay point.\nWe did not record (x, y) directly in the C++ code, but we recorded the crystal copy number, which is enough: B3a’s crystals are arranged in a regular ring, so we can compute each crystal’s position from its copy number. The default geometry in DetectorConstruction.cc lays out:\n\n32 crystals per ring, evenly spaced around 360°\n9 axial rings stacked along the scanner’s z-axis\nCrystals are placed at a fixed inner radius (≈ 32 cm; see the constructor for the exact value)\n\nCopy numbers run sequentially: copy n belongs to ring n // 32, position n % 32 within that ring.\nCreate analyze_coincidence.py in the build directory:\nnano analyze_coincidence.py\nPaste the following content (must start at column 0 — no leading whitespace):\nimport pandas as pd\nimport matplotlib.pyplot as plt\nimport numpy as np\n\n# --- B3a default geometry constants ---\n# If you have changed the detector, update these to match.\nN_CRYST_PER_RING = 32\nN_RINGS = 9\nRING_RADIUS_MM = 320.0   # approximate; verify in DetectorConstruction.cc\nAXIAL_PITCH_MM = 30.0    # approximate ring-to-ring spacing\n\n\ndef crystal_position(crystal_id):\n    \"\"\"Map a B3a crystal copy number to its approximate (x, y, z) center, in mm.\"\"\"\n    ring_idx = crystal_id // N_CRYST_PER_RING\n    in_ring = crystal_id % N_CRYST_PER_RING\n    theta = (in_ring + 0.5) * 2.0 * np.pi / N_CRYST_PER_RING\n    x = RING_RADIUS_MM * np.cos(theta)\n    y = RING_RADIUS_MM * np.sin(theta)\n    z = (ring_idx - (N_RINGS - 1) / 2.0) * AXIAL_PITCH_MM\n    return x, y, z\n\n\n# --- Load data and add positions ---\ndata = pd.read_csv('B3_output_nt_crystal_edep_t0.csv',\n                   comment='#', header=None,\n                   names=['EventID', 'CrystalID', 'Edep'])\ndata['Edep_keV'] = data['Edep'] * 1000.0\nxyz = data['CrystalID'].apply(crystal_position)\ndata['X'] = xyz.apply(lambda t: t[0])\ndata['Y'] = xyz.apply(lambda t: t[1])\ndata['Z'] = xyz.apply(lambda t: t[2])\n\n# --- Hit-position scatter (top view) ---\nplt.figure(figsize=(7, 7))\nplt.scatter(data['X'], data['Y'], s=2, alpha=0.1)\nplt.title('Crystal Hit Positions (Top View)')\nplt.xlabel('X (mm)')\nplt.ylabel('Y (mm)')\nplt.axis('equal')\nplt.grid(True, alpha=0.3)\nplt.tight_layout()\nplt.savefig('hit_positions.png', dpi=200)\n\n# --- Filter for photopeak hits ---\nPHOTOPEAK_LOW = 450   # keV\nPHOTOPEAK_HIGH = 550  # keV\nphotopeak = data[(data['Edep_keV'] &gt;= PHOTOPEAK_LOW) &\n                 (data['Edep_keV'] &lt;= PHOTOPEAK_HIGH)]\nprint(f\"Hits in photopeak window [{PHOTOPEAK_LOW}, {PHOTOPEAK_HIGH}] keV: \"\n      f\"{len(photopeak)} ({100*len(photopeak)/len(data):.1f}% of all hits)\")\n\n# --- Find true coincidences: events with exactly 2 photopeak hits ---\ncounts_per_event = photopeak.groupby('EventID').size()\ncoincidence_events = counts_per_event[counts_per_event == 2].index\nprint(f\"Total events processed: {data['EventID'].nunique()}\")\nprint(f\"True coincidences found: {len(coincidence_events)}\")\n\ncoincident_hits = photopeak[photopeak['EventID'].isin(coincidence_events)]\n\n# --- Draw lines of response ---\nplt.figure(figsize=(8, 8))\nplt.scatter(data['X'], data['Y'], c='lightgray', s=1, alpha=0.1,\n            label='all hits')\n\nplotted = 0\nmax_lines = 200\nfor event_id in coincidence_events:\n    if plotted &gt;= max_lines:\n        break\n    pair = coincident_hits[coincident_hits['EventID'] == event_id]\n    plt.plot(pair['X'].values, pair['Y'].values,\n             'r-', alpha=0.3, linewidth=0.6)\n    plotted += 1\n\nplt.title(f'Lines of Response (first {plotted} coincidences)')\nplt.xlabel('X (mm)')\nplt.ylabel('Y (mm)')\nplt.axis('equal')\nplt.grid(True, alpha=0.3)\nplt.tight_layout()\nplt.savefig('lines_of_response.png', dpi=200)\nprint(\"LOR figure saved to lines_of_response.png\")\nRun it:\npython3 analyze_coincidence.py\neog lines_of_response.png\nYou should see a dense cluster of red lines crossing near the center of the ring — that intersection region marks the location of the simulated source.\n\n\n\nLines of Response",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 4: Medical Physics Application - A PET Scanner"
+    ]
+  },
+  {
+    "objectID": "lab4_exampleB3/lab4.html#analysis-questions",
+    "href": "lab4_exampleB3/lab4.html#analysis-questions",
+    "title": "Lab 4: Medical Physics Application - A PET Scanner",
+    "section": "Analysis Questions",
+    "text": "Analysis Questions\n\nEnergy Spectrum\n\nOpen pet_spectrum.png. At what energy is the main peak centered? How close is this to the theoretical 511 keV?\nWhy is the photopeak so much taller than the rest of the spectrum?\nThe broad, lower-energy distribution is the Compton continuum — gamma rays that scattered inside a crystal and escaped, depositing only part of their energy. Why is it important for a PET scanner to distinguish photopeak hits from Compton-continuum hits?\n\n\n\nCoincidence Logic\n\nWe defined a true coincidence as “exactly two hits in the photopeak window in the same event.” What might cause an event to have three photopeak hits? What about one?\nWe used a tight window of 450–550 keV. What would happen to the fraction of accepted events — and to the spatial accuracy of the LORs — if we widened the window to 200–700 keV? (Hint: think about Compton-scattered photons from one crystal landing in another.)\n\n\n\nLines of Response\n\nLook at lines_of_response.png. Do the lines all cross at a single point, or is there a spread? What physical effects limit the spatial resolution of a real PET scanner? (Consider: positron range before annihilation, non-collinearity of the two photons, finite crystal size.)\nWhere in the image is the densest crossing region? What does this tell you about where the simulated source is located?\n\n\n\nWorkflow\n\nWe used the existing primitive scorer rather than writing a custom sensitive detector. What did this save us, and what did we give up (e.g., what information about the hit was not available)?\nHow would you extend the simulation to image two separate point sources in the phantom? What changes in the C++? What changes in the Python?",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 4: Medical Physics Application - A PET Scanner"
+    ]
+  },
+  {
+    "objectID": "lab4_exampleB3/lab4.html#troubleshooting",
+    "href": "lab4_exampleB3/lab4.html#troubleshooting",
+    "title": "Lab 4: Medical Physics Application - A PET Scanner",
+    "section": "Troubleshooting",
+    "text": "Troubleshooting\n\nCompilation errors mentioning G4AnalysisManager: make sure you added #include \"G4AnalysisManager.hh\" to RunAction.cc.\nCSV file not found in Python: confirm the filename in pd.read_csv(...) matches what ls *.csv shows in your build directory.\nNo photopeak in the spectrum: check that you ran enough events (50,000 is a reasonable minimum) and that you are reading the file in keV. Also check the histogram range and binning.\nMany B3_output_nt_crystal_edep_tN.csv files instead of one _t0.csv: Geant4 ran multi-threaded. Add /run/numberOfThreads 1 to your macro before /run/initialize, delete the per-thread files (rm B3_output_nt_*_t*.csv), and re-run.\nEmpty LOR figure: tighten or relax the photopeak window. With very few simulated events, you may need to lower the lower bound (e.g., 400 keV) to find any coincidences.",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 4: Medical Physics Application - A PET Scanner"
+    ]
+  },
+  {
+    "objectID": "lab4_exampleB3/lab4.html#verification-checklist",
+    "href": "lab4_exampleB3/lab4.html#verification-checklist",
+    "title": "Lab 4: Medical Physics Application - A PET Scanner",
+    "section": "Verification Checklist",
+    "text": "Verification Checklist\nBefore completing this lab, verify you can:\n\nCompile and run the unmodified B3a example\nIdentify the existing crystal/edep hits collection in the source code\nModify RunAction.cc to route the framework’s score ntuples to CSV\nGenerate B3_output_nt_crystal_edep_t0.csv from a 50,000-event run\nPlot the crystal energy spectrum and identify the 511 keV photopeak\nMap crystal copy numbers to (x, y) positions\nFind true-coincidence events and draw their lines of response",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 4: Medical Physics Application - A PET Scanner"
+    ]
+  },
+  {
+    "objectID": "lab4_exampleB3/lab4.html#conclusion",
+    "href": "lab4_exampleB3/lab4.html#conclusion",
+    "title": "Lab 4: Medical Physics Application - A PET Scanner",
+    "section": "Conclusion",
+    "text": "Conclusion\nIn this lab you simulated a complete PET scanner system. You navigated B3a’s existing primitive-scorer infrastructure, added per-hit data output, and used Python to extract two pieces of physics from the same dataset: the 511 keV photopeak in the energy spectrum, and the lines of response that connect coincident annihilation photons. Together these are the building blocks of PET image reconstruction — combining particle physics (annihilation), detector hardware (scintillators), and software (coincidence logic) to see inside the body.",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 4: Medical Physics Application - A PET Scanner"
+    ]
+  },
+  {
+    "objectID": "lab4_exampleB3/lab4.html#references",
+    "href": "lab4_exampleB3/lab4.html#references",
+    "title": "Lab 4: Medical Physics Application - A PET Scanner",
+    "section": "References",
+    "text": "References\n\nGeant4 Collaboration. (n.d.). README for examples/basic/B3. GitLab.\nGeant4 Collaboration. (n.d.). Geant4 Application Developer’s Guide — Hits and Sensitive Detectors.\nCherry, S. R., Sorenson, J. A., & Phelps, M. E. (2012). Physics in Nuclear Medicine (4th ed.). Elsevier Health Sciences.",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 4: Medical Physics Application - A PET Scanner"
+    ]
+  },
+  {
+    "objectID": "lab4_exampleB3/lab4.html#optional-extensions",
+    "href": "lab4_exampleB3/lab4.html#optional-extensions",
+    "title": "Lab 4: Medical Physics Application - A PET Scanner",
+    "section": "Optional Extensions",
+    "text": "Optional Extensions\n\nEnergy resolution. Real scintillators broaden the photopeak. Add Gaussian smearing of Edep in your Python analysis (e.g., 10% FWHM at 511 keV) and re-run the spectrum and coincidence steps.\n3-D LORs. Use the Z column from crystal_position to draw lines of response in 3-D with mpl_toolkits.mplot3d.\nTwo sources. Modify the primary generator to alternate between two source positions, then check whether your LOR plot shows two overlapping clusters of crossings.\nCustom sensitive detector. Replace the primitive scorer with a custom G4VSensitiveDetector and a CrystalHit class (in namespace B3a) that records position and time directly in C++. Compare the results to the copy-number-based approach used here.",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 4: Medical Physics Application - A PET Scanner"
+    ]
+  },
+  {
+    "objectID": "lab2_exampleB1/lab2.html",
+    "href": "lab2_exampleB1/lab2.html",
+    "title": "Lab 2: First Simulation - Building and Running Geant4 Example B1",
+    "section": "",
+    "text": "In this lab, you will compile and run your first Geant4 simulation. You will learn the difference between interactive and batch mode and how to control the simulation parameters. By the end of this session, you will be able to:\n\nLocate and copy Geant4 example applications from the source distribution\nCompile a Geant4 example application using CMake\nRun a simulation and visualize the results in a graphical user interface (GUI)\nUse the Geant4 command-line interface to control the simulation\nCreate and use macro files to run simulations in batch mode\nModify simulation parameters, such as particle type, energy, and the number of events",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 2: First Simulation - Building and Running Geant4 Example B1"
+    ]
+  },
+  {
+    "objectID": "lab2_exampleB1/lab2.html#learning-objectives",
+    "href": "lab2_exampleB1/lab2.html#learning-objectives",
+    "title": "Lab 2: First Simulation - Building and Running Geant4 Example B1",
+    "section": "",
+    "text": "In this lab, you will compile and run your first Geant4 simulation. You will learn the difference between interactive and batch mode and how to control the simulation parameters. By the end of this session, you will be able to:\n\nLocate and copy Geant4 example applications from the source distribution\nCompile a Geant4 example application using CMake\nRun a simulation and visualize the results in a graphical user interface (GUI)\nUse the Geant4 command-line interface to control the simulation\nCreate and use macro files to run simulations in batch mode\nModify simulation parameters, such as particle type, energy, and the number of events",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 2: First Simulation - Building and Running Geant4 Example B1"
+    ]
+  },
+  {
+    "objectID": "lab2_exampleB1/lab2.html#introduction",
+    "href": "lab2_exampleB1/lab2.html#introduction",
+    "title": "Lab 2: First Simulation - Building and Running Geant4 Example B1",
+    "section": "Introduction",
+    "text": "Introduction\nNow that you have a working Geant4 installation, it’s time to use it. Geant4 is a toolkit, which means we use it to build our own specific applications. The Geant4 distribution includes many examples that demonstrate how to do this. We will start with Example B1, a simple application that simulates a particle beam hitting a target made of different materials and measures the energy deposited.\n\n\n\nGeant4 Example B1 Geometry\n\n\nYou will learn to run this application in two ways:\n\nInteractive Mode: This mode opens a GUI, allowing you to see the detector geometry and particle tracks. It’s excellent for debugging and understanding the simulation visually.\nBatch Mode: This mode runs without a GUI, executing a series of commands from a text file called a “macro”. This is how you run simulations to collect large amounts of data for analysis.\n\nMastering both modes is key to the scientific computing workflow: explore and debug visually, then collect data efficiently.",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 2: First Simulation - Building and Running Geant4 Example B1"
+    ]
+  },
+  {
+    "objectID": "lab2_exampleB1/lab2.html#prerequisites",
+    "href": "lab2_exampleB1/lab2.html#prerequisites",
+    "title": "Lab 2: First Simulation - Building and Running Geant4 Example B1",
+    "section": "Prerequisites",
+    "text": "Prerequisites\nBefore you begin, ensure you have the following:\n\nCompleted Lab 1 (Geant4 installed and environment configured)\nGeant4 source code available on your system\nCMake and C++ compiler (already installed in Lab 1)\nQt5 support enabled (for GUI visualization)",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 2: First Simulation - Building and Running Geant4 Example B1"
+    ]
+  },
+  {
+    "objectID": "lab2_exampleB1/lab2.html#pre-lab-questions",
+    "href": "lab2_exampleB1/lab2.html#pre-lab-questions",
+    "title": "Lab 2: First Simulation - Building and Running Geant4 Example B1",
+    "section": "Pre-Lab Questions",
+    "text": "Pre-Lab Questions\n\nIn the context of a simulation, what is an “event”? What is a “run”?\nWhat is the purpose of a macro file in Geant4?\nBased on the Example B1 README, what is the default particle and energy being simulated?\nWhat is the difference between compiling Geant4 itself and compiling a Geant4 application?",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 2: First Simulation - Building and Running Geant4 Example B1"
+    ]
+  },
+  {
+    "objectID": "lab2_exampleB1/lab2.html#step-1-locate-and-copy-example-b1",
+    "href": "lab2_exampleB1/lab2.html#step-1-locate-and-copy-example-b1",
+    "title": "Lab 2: First Simulation - Building and Running Geant4 Example B1",
+    "section": "Step 1: Locate and Copy Example B1",
+    "text": "Step 1: Locate and Copy Example B1\nThe Example B1 source code (and all other examples) are included in the Geant4 source code that you downloaded in Lab 1.\n\nFirst, verify where your Geant4 source code is located. If you followed Lab 1, it should be in your home directory:\nls ~/geant4-v11.3.2/examples/basic/B1\nCreate a dedicated directory for lab examples and navigate into it:\nmkdir -p ~/g4-labs/lab2\ncd ~/g4-labs/lab2\nCopy the source code for Example B1 into your lab directory:\ncp -r ~/geant4-v11.3.2/examples/basic/B1 .\nNavigate into the B1 example directory:\ncd B1\nExplore the contents of the directory:\nls -l\nYou should see several directories and files:\n\nsrc/ - Source code files (.cc)\ninclude/ - Header files (.hh)\nexampleB1.cc - Main program file\nCMakeLists.txt - Build configuration\n*.mac - Macro files for different run configurations\nREADME - Documentation for this example\n\n\n\n\n\nB1 Directory Structure",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 2: First Simulation - Building and Running Geant4 Example B1"
+    ]
+  },
+  {
+    "objectID": "lab2_exampleB1/lab2.html#step-2-compile-the-b1-application",
+    "href": "lab2_exampleB1/lab2.html#step-2-compile-the-b1-application",
+    "title": "Lab 2: First Simulation - Building and Running Geant4 Example B1",
+    "section": "Step 2: Compile the B1 Application",
+    "text": "Step 2: Compile the B1 Application\nJust like we compiled Geant4 itself in Lab 1, we need to compile the B1 application. We will use the same out-of-source build technique with CMake.\n\nFirst, ensure your Geant4 environment is set up. Open a new terminal and run:\nsource /usr/local/bin/geant4.sh\nVerify the environment variables are set:\nenv | grep G4\nCreate a build directory for the B1 application inside the B1 folder:\nmkdir build\ncd build\nRun cmake to configure the build. The .. tells cmake to look for the source code in the parent directory:\ncmake ..\nBecause you sourced the geant4.sh script, cmake automatically knows where to find your Geant4 installation.\n\n\n\n\nCMake Configuration Output\n\n\n\nCompile the application using make:\nmake -j$(nproc)\nThis uses all available CPU cores to speed up compilation.\nAfter compilation finishes, verify the executable was created:\nls -lh exampleB1\nYou should see the exampleB1 executable file.\n\n\n\n\nSuccessful Build Output",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 2: First Simulation - Building and Running Geant4 Example B1"
+    ]
+  },
+  {
+    "objectID": "lab2_exampleB1/lab2.html#step-3-run-in-interactive-mode-gui",
+    "href": "lab2_exampleB1/lab2.html#step-3-run-in-interactive-mode-gui",
+    "title": "Lab 2: First Simulation - Building and Running Geant4 Example B1",
+    "section": "Step 3: Run in Interactive Mode (GUI)",
+    "text": "Step 3: Run in Interactive Mode (GUI)\nNow let’s run the simulation with the graphical user interface to visualize what’s happening.\n\nFrom the B1/build directory, run the executable with no arguments:\n./exampleB1\nA Qt GUI window should appear showing:\n\nLeft pane: 3D viewer with the detector geometry\nRight pane: Control panel with viewing options\nBottom pane: Command-line interface with Idle&gt; prompt\n\n\n\n\n\nB1 Interactive GUI Window\n\n\n\nThe simulation is now waiting for your commands. Let’s fire 10 particles. At the Idle&gt; prompt, type:\n/run/beamOn 10\nYou will see green lines appear in the detector. These are the tracks of the particles (6 MeV gamma rays by default) and their secondary particles as they travel through the water, tissue, and bone materials.\n\n\n\n\nParticle Tracks Visualization\n\n\n\nExperiment with the visualization:\n\nUse your mouse to rotate the view (left-click and drag)\nZoom in/out (scroll wheel)\nPan the view (middle-click and drag, or shift + left-click)\nTry different viewing angles to understand the geometry\n\nRun more events to see different particle behaviors:\n/run/beamOn 50\n\n\n\n\nMultiple Events Display\n\n\n\nTo exit the application, type exit at the prompt:\nexit",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 2: First Simulation - Building and Running Geant4 Example B1"
+    ]
+  },
+  {
+    "objectID": "lab2_exampleB1/lab2.html#step-4-understanding-the-simulation-output",
+    "href": "lab2_exampleB1/lab2.html#step-4-understanding-the-simulation-output",
+    "title": "Lab 2: First Simulation - Building and Running Geant4 Example B1",
+    "section": "Step 4: Understanding the Simulation Output",
+    "text": "Step 4: Understanding the Simulation Output\n\nLook at the terminal output from your interactive run. You should see information including:\n\nRun summary\nMean energy deposited in different volumes\nDose calculations\n\n\n\n\n\nTerminal Output Example\n\n\n\nThe output shows:\n\nAbsorber: Energy deposited in the main target material\nGap: Energy deposited in the gap regions\nDose: Radiation dose in the sensitive detector",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 2: First Simulation - Building and Running Geant4 Example B1"
+    ]
+  },
+  {
+    "objectID": "lab2_exampleB1/lab2.html#step-5-run-in-batch-mode-macros",
+    "href": "lab2_exampleB1/lab2.html#step-5-run-in-batch-mode-macros",
+    "title": "Lab 2: First Simulation - Building and Running Geant4 Example B1",
+    "section": "Step 5: Run in Batch Mode (Macros)",
+    "text": "Step 5: Run in Batch Mode (Macros)\nRunning simulations by typing commands one by one is tedious. For longer runs and reproducible simulations, we use macro files.\n\nGo back to the main B1 directory (one level up from build):\ncd ..\nView the contents of the provided macro file run1.mac:\ncat run1.mac\nYou will see a list of Geant4 commands, including /run/beamOn 10.\n\n\n\n\nMacro File Contents\n\n\n\nNow, run the simulation using the macro file:\ncd build\n./exampleB1 ../run1.mac\nThe simulation will run immediately, printing information to the terminal, and then exit. You will see output summarizing the run, including the mean energy and dose deposited in the sensitive volumes. No GUI will appear—this is batch mode.\nLet’s examine another macro file that shows more options:\ncat ../exampleB1.in\nNotice the lines controlling the particle gun:\n\n/gun/particle gamma - Sets particle type\n/gun/energy 6 MeV - Sets particle energy",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 2: First Simulation - Building and Running Geant4 Example B1"
+    ]
+  },
+  {
+    "objectID": "lab2_exampleB1/lab2.html#step-6-modifying-the-simulation",
+    "href": "lab2_exampleB1/lab2.html#step-6-modifying-the-simulation",
+    "title": "Lab 2: First Simulation - Building and Running Geant4 Example B1",
+    "section": "Step 6: Modifying the Simulation",
+    "text": "Step 6: Modifying the Simulation\nThe real power of Geant4 is the ability to easily change simulation parameters using UI commands in macro files.\n\nCreate a new macro file for your custom simulation. In the B1 directory (not build), create mylab.mac:\ncd ~/g4-labs/lab2/B1\nnano mylab.mac\nOr use your preferred text editor (gedit, vim, etc.)\nAdd the following commands to your macro file:\n# My custom run for Lab 2\n# Author: [Your Name]\n\n# Initialize the kernel\n/run/initialize\n\n# Set the particle to a proton\n/gun/particle proton\n\n# Set the proton's kinetic energy to 150 MeV\n/gun/energy 150 MeV\n\n# Print progress every 100 events\n/run/printProgress 100\n\n# Run 1000 events\n/run/beamOn 1000\nSave and close the file.\nRun the simulation using your new macro:\ncd build\n./exampleB1 ../mylab.mac\n\n\n\n\nCustom Macro Execution",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 2: First Simulation - Building and Running Geant4 Example B1"
+    ]
+  },
+  {
+    "objectID": "lab2_exampleB1/lab2.html#step-7-exploring-different-particles-and-energies",
+    "href": "lab2_exampleB1/lab2.html#step-7-exploring-different-particles-and-energies",
+    "title": "Lab 2: First Simulation - Building and Running Geant4 Example B1",
+    "section": "Step 7: Exploring Different Particles and Energies",
+    "text": "Step 7: Exploring Different Particles and Energies\nLet’s create additional macro files to explore different simulation scenarios:\n\nCreate a macro for electron simulation (electron_beam.mac):\n/run/initialize\n/gun/particle e-\n/gun/energy 50 MeV\n/run/beamOn 500\nCreate a macro for neutron simulation (neutron_beam.mac):\n/run/initialize\n/gun/particle neutron\n/gun/energy 14 MeV\n/run/beamOn 1000\nRun each simulation and compare the results:\n./exampleB1 ../electron_beam.mac\n./exampleB1 ../neutron_beam.mac",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 2: First Simulation - Building and Running Geant4 Example B1"
+    ]
+  },
+  {
+    "objectID": "lab2_exampleB1/lab2.html#analysis-questions",
+    "href": "lab2_exampleB1/lab2.html#analysis-questions",
+    "title": "Lab 2: First Simulation - Building and Running Geant4 Example B1",
+    "section": "Analysis Questions",
+    "text": "Analysis Questions\n\nCompare the output in your terminal from the default run (10 gammas) and your custom run (1000 protons).\nLook at the final lines of the output for both runs. Find the section that says: The run consists of... The mean energy deposited in the envelope is...\nHow does the mean energy deposited per event differ between:\n\n6 MeV gamma rays\n150 MeV protons\n50 MeV electrons\n14 MeV neutrons\n\nDoes the result make sense intuitively? Why or why not? Consider:\n\nDifferent interaction mechanisms for different particles\nEnergy of the incident particles\nRange and stopping power\n\nWhy is batch mode more suitable for running 1000 events than interactive mode?\nWhat advantages does using macro files provide for scientific reproducibility?",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 2: First Simulation - Building and Running Geant4 Example B1"
+    ]
+  },
+  {
+    "objectID": "lab2_exampleB1/lab2.html#optional-setting-up-vs-code-ide",
+    "href": "lab2_exampleB1/lab2.html#optional-setting-up-vs-code-ide",
+    "title": "Lab 2: First Simulation - Building and Running Geant4 Example B1",
+    "section": "Optional: Setting up VS Code IDE",
+    "text": "Optional: Setting up VS Code IDE\nFor more advanced development work, you may want to use an Integrated Development Environment (IDE) like VS Code:\n\nDownload and install VS Code\nInstall useful extensions:\n\nC/C++ Extension Pack\nCMake Tools\nCode Runner\n\nOpen the B1 directory in VS Code:\ncode ~/g4-labs/lab2/B1\nExplore the source code files to understand how the simulation works:\n\nexampleB1.cc - Main program\nsrc/DetectorConstruction.cc - Geometry definition\nsrc/PrimaryGeneratorAction.cc - Particle gun setup\nsrc/RunAction.cc - What happens each run\nsrc/EventAction.cc - What happens each event\n\n\n\n\n\nVS Code with B1 Project",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 2: First Simulation - Building and Running Geant4 Example B1"
+    ]
+  },
+  {
+    "objectID": "lab2_exampleB1/lab2.html#troubleshooting",
+    "href": "lab2_exampleB1/lab2.html#troubleshooting",
+    "title": "Lab 2: First Simulation - Building and Running Geant4 Example B1",
+    "section": "Troubleshooting",
+    "text": "Troubleshooting\n\nError: “Geant4 not found”: Make sure you’ve sourced the geant4.sh script in your current terminal session\nNo GUI appears: Verify that Qt5 was enabled when you built Geant4 (GEANT4_USE_QT=ON)\nCompilation errors: Ensure all Lab 1 dependencies are installed\nMacro file not found: Check that you’re running from the build directory and using the correct relative path (../mylab.mac)",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 2: First Simulation - Building and Running Geant4 Example B1"
+    ]
+  },
+  {
+    "objectID": "lab2_exampleB1/lab2.html#verification-checklist",
+    "href": "lab2_exampleB1/lab2.html#verification-checklist",
+    "title": "Lab 2: First Simulation - Building and Running Geant4 Example B1",
+    "section": "Verification Checklist",
+    "text": "Verification Checklist\nBefore completing this lab, verify you can:\n\nLocate and copy Geant4 example code\nBuild a Geant4 application using CMake\nRun simulations in interactive mode with GUI\nRun simulations in batch mode using macro files\nCreate custom macro files with different particles and energies\nInterpret the simulation output and energy deposition results",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 2: First Simulation - Building and Running Geant4 Example B1"
+    ]
+  },
+  {
+    "objectID": "lab2_exampleB1/lab2.html#conclusion",
+    "href": "lab2_exampleB1/lab2.html#conclusion",
+    "title": "Lab 2: First Simulation - Building and Running Geant4 Example B1",
+    "section": "Conclusion",
+    "text": "Conclusion\nYou have successfully compiled and run your first Geant4 simulation using Example B1. You’ve learned to work in both interactive and batch modes, and you’ve seen how to modify simulation parameters using macro files. These skills form the foundation for all future Geant4 work, where you’ll create increasingly complex simulations for radiation physics and detector design applications.",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 2: First Simulation - Building and Running Geant4 Example B1"
+    ]
+  },
+  {
+    "objectID": "lab2_exampleB1/lab2.html#references",
+    "href": "lab2_exampleB1/lab2.html#references",
+    "title": "Lab 2: First Simulation - Building and Running Geant4 Example B1",
+    "section": "References",
+    "text": "References\n\nGeant4 Collaboration. (n.d.). Book for Application Developers\nGeant4 Collaboration. (n.d.). README for examples/basic/B1. GitLab\nGeant4 Example B1 Macro Files: run1.mac, exampleB1.in\nSLAC. (2021). Geant4 Tutorial: Hands On 1",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 2: First Simulation - Building and Running Geant4 Example B1"
+    ]
+  },
+  {
+    "objectID": "lab2_exampleB1/lab2.html#additional-resources",
+    "href": "lab2_exampleB1/lab2.html#additional-resources",
+    "title": "Lab 2: First Simulation - Building and Running Geant4 Example B1",
+    "section": "Additional Resources",
+    "text": "Additional Resources\n\nGeant4 User’s Guide for Application Developers\nGeant4 Examples Documentation\nGeant4 Command Reference",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 2: First Simulation - Building and Running Geant4 Example B1"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Geant4 Radiation Labs",
+    "section": "",
+    "text": "A four-lab series that takes you from a fresh Linux install to a working PET-scanner simulation, using Geant4 for the physics and Python (pandas, matplotlib) for analysis.\nThe labs are designed to be done in order. Each one builds on the environment, code, and analysis idioms of the previous one.",
+    "crumbs": [
+      "Home",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "index.html#what-this-is",
+    "href": "index.html#what-this-is",
+    "title": "Geant4 Radiation Labs",
+    "section": "",
+    "text": "A four-lab series that takes you from a fresh Linux install to a working PET-scanner simulation, using Geant4 for the physics and Python (pandas, matplotlib) for analysis.\nThe labs are designed to be done in order. Each one builds on the environment, code, and analysis idioms of the previous one.",
+    "crumbs": [
+      "Home",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "index.html#audience",
+    "href": "index.html#audience",
+    "title": "Geant4 Radiation Labs",
+    "section": "Audience",
+    "text": "Audience\nUpper-level undergraduates or early graduate students with:\n\nComfort with the Linux command line\nSome C++ literacy (you don’t need to write much; you’ll mostly read and patch)\nSome Python literacy (you’ll write short analysis scripts)\n\nNo prior Geant4 or medical-physics knowledge is assumed.",
+    "crumbs": [
+      "Home",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "index.html#the-labs",
+    "href": "index.html#the-labs",
+    "title": "Geant4 Radiation Labs",
+    "section": "The labs",
+    "text": "The labs\n\nLab 1 — Setting Up Linux and Building Geant4 Install Ubuntu in a virtual machine and build Geant4 from source with Qt visualisation support.\nLab 2 — First Simulation: Building and Running B1 Compile Geant4’s B1 example, run it interactively (Qt GUI) and in batch mode via macros, and modify the particle, energy, and event count.\nLab 3 — Acquiring and Analysing Simulation Data Patch B1’s C++ to write per-event energy data to CSV via G4AnalysisManager, then load it in Python with pandas and produce histograms, statistics, and per-particle comparisons.\nLab 4 — A PET Scanner Apply the same workflow to Geant4’s B3a (Positron Emission Tomography) example. Identify the 511 keV photopeak in the energy spectrum, find true coincidences, and reconstruct lines of response.",
+    "crumbs": [
+      "Home",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "index.html#what-youll-build",
+    "href": "index.html#what-youll-build",
+    "title": "Geant4 Radiation Labs",
+    "section": "What you’ll build",
+    "text": "What you’ll build\nBy the end of the series you will have:\n\nA reproducible Geant4 + Python development environment\nModified Geant4 applications that emit clean CSV data\nPython scripts that compute statistics and produce publication-style plots\nA working understanding of the simulate → save → analyse → visualise loop that underlies most computational physics",
+    "crumbs": [
+      "Home",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "index.html#source-and-pdfs",
+    "href": "index.html#source-and-pdfs",
+    "title": "Geant4 Radiation Labs",
+    "section": "Source and PDFs",
+    "text": "Source and PDFs\nThe full lab source — .qmd files, screenshots, and the Python scripts that generate the conceptual diagrams — lives at https://github.com/jwinterm/geant4-radiation-labs.\nPDFs of any lab can be regenerated locally with Quarto:\nquarto render lab1_setup/lab1.qmd --to pdf",
+    "crumbs": [
+      "Home",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "index.html#citing",
+    "href": "index.html#citing",
+    "title": "Geant4 Radiation Labs",
+    "section": "Citing",
+    "text": "Citing\nIf this series is useful in your teaching or work, please cite as:\n\nMurphy, J. and Carlson, S. (2025). Geant4 Radiation Labs. https://jwinterm.github.io/geant4-radiation-labs/",
+    "crumbs": [
+      "Home",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "lab1_setup/lab1.html",
+    "href": "lab1_setup/lab1.html",
+    "title": "Lab 1: Setting Up Linux and Building Geant4",
+    "section": "",
+    "text": "In this lab, you will set up the development environment that the rest of the course depends on. By the end of this session, you will be able to:\n\nInstall Ubuntu Linux in a virtual machine and configure it for productive use\nInstall the system libraries required to build Geant4 with Qt visualization support\nCompile Geant4 from source using CMake\nConfigure shell environment variables so applications can locate the Geant4 installation\nVerify the installation by inspecting the directory layout and environment",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 1: Setting Up Linux and Building Geant4"
+    ]
+  },
+  {
+    "objectID": "lab1_setup/lab1.html#verification-and-analysis",
+    "href": "lab1_setup/lab1.html#verification-and-analysis",
+    "title": "Lab 1: Setting Up Linux and Building Geant4",
+    "section": "Verification and Analysis",
+    "text": "Verification and Analysis\n\nVerify that the environment is set correctly. In the same terminal where you sourced geant4.sh, run:\nenv | grep G4\nYou should see several lines of output that start with G4... — for example G4INSTALL=/usr/local, G4LEDATAPATH=..., and so on. This confirms the environment variables were exported.\nIf G4INSTALL is unset, the source step did not run successfully; re-run it before continuing.\nNavigate to your installation directory and explore the structure:\ncd /usr/local\nls -R | less\nCan you find:\n\nThe lib directory containing the libraries?\nThe include directory with header files?\nThe share directory with examples and data files?",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 1: Setting Up Linux and Building Geant4"
+    ]
+  },
+  {
+    "objectID": "lab1_setup/lab1.html#troubleshooting",
+    "href": "lab1_setup/lab1.html#troubleshooting",
+    "title": "Lab 1: Setting Up Linux and Building Geant4",
+    "section": "Troubleshooting",
+    "text": "Troubleshooting\n\nIf CMake fails, check that all required packages are installed\nIf compilation fails with memory errors, reduce the number of parallel jobs (e.g., make -j2 instead of make -j$(nproc))\nIf environment variables are not set, ensure you have sourced geant4.sh in your current terminal",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 1: Setting Up Linux and Building Geant4"
+    ]
+  },
+  {
+    "objectID": "lab1_setup/lab1.html#verification-checklist",
+    "href": "lab1_setup/lab1.html#verification-checklist",
+    "title": "Lab 1: Setting Up Linux and Building Geant4",
+    "section": "Verification Checklist",
+    "text": "Verification Checklist\nBefore completing this lab, verify you can:\n\nBoot a working Ubuntu virtual machine with shared clipboard and fullscreen support\nInstall build dependencies and Qt5 development packages from apt\nRun CMake to configure the Geant4 build with Qt and data downloads enabled\nCompile and install Geant4 with make and sudo make install\nSource geant4.sh and confirm G4INSTALL and related variables are set\nLocate the Geant4 examples directory under /usr/local/share",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 1: Setting Up Linux and Building Geant4"
+    ]
+  },
+  {
+    "objectID": "lab1_setup/lab1.html#conclusion",
+    "href": "lab1_setup/lab1.html#conclusion",
+    "title": "Lab 1: Setting Up Linux and Building Geant4",
+    "section": "Conclusion",
+    "text": "Conclusion\nYou have successfully set up a Linux virtual machine and compiled Geant4 from source with Qt visualization support. In Lab 2 you will use this environment to build and run your first particle-physics simulation.",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 1: Setting Up Linux and Building Geant4"
+    ]
+  },
+  {
+    "objectID": "lab3_modifyB1/lab3.html",
+    "href": "lab3_modifyB1/lab3.html",
+    "title": "Lab 3: Acquiring and Analyzing Simulation Data",
+    "section": "",
+    "text": "In this lab, you will bridge the gap between simulation and analysis. You will modify the C++ source code of a Geant4 application to save data and then use Python to analyze and visualize that data. By the end of this session, you will be able to:\n\nUnderstand the basic structure of Geant4 user action classes\nModify C++ code to implement the G4AnalysisManager for data output\nSave simulation results to CSV file format for universal compatibility\nWrite Python scripts using the pandas and matplotlib libraries\nLoad simulation data into pandas DataFrames\nCreate and customize histograms to visualize distributions\nCalculate descriptive statistics (mean, standard deviation, percentiles) from data\nFilter and manipulate data using pandas operations\nCompare multiple datasets and create multi-plot figures",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 3: Acquiring and Analyzing Simulation Data"
+    ]
+  },
+  {
+    "objectID": "lab3_modifyB1/lab3.html#learning-objectives",
+    "href": "lab3_modifyB1/lab3.html#learning-objectives",
+    "title": "Lab 3: Acquiring and Analyzing Simulation Data",
+    "section": "",
+    "text": "In this lab, you will bridge the gap between simulation and analysis. You will modify the C++ source code of a Geant4 application to save data and then use Python to analyze and visualize that data. By the end of this session, you will be able to:\n\nUnderstand the basic structure of Geant4 user action classes\nModify C++ code to implement the G4AnalysisManager for data output\nSave simulation results to CSV file format for universal compatibility\nWrite Python scripts using the pandas and matplotlib libraries\nLoad simulation data into pandas DataFrames\nCreate and customize histograms to visualize distributions\nCalculate descriptive statistics (mean, standard deviation, percentiles) from data\nFilter and manipulate data using pandas operations\nCompare multiple datasets and create multi-plot figures",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 3: Acquiring and Analyzing Simulation Data"
+    ]
+  },
+  {
+    "objectID": "lab3_modifyB1/lab3.html#introduction",
+    "href": "lab3_modifyB1/lab3.html#introduction",
+    "title": "Lab 3: Acquiring and Analyzing Simulation Data",
+    "section": "Introduction",
+    "text": "Introduction\nA simulation that produces no output is not very useful. To perform scientific analysis, we need to “score” quantities of interest—like the energy deposited in a detector—and save this data to a file. In this lab, you will learn the modern, standard way to do this in Geant4 using a special class called G4AnalysisManager. We will configure it to save the energy deposited in each event into a simple text-based CSV (Comma-Separated Values) file.\n\n\n\nData Analysis Workflow\n\n\nOnce we have the data, we will switch hats from a simulation user to a data analyst. We will use the powerful Python programming language along with two essential libraries: pandas for data manipulation and matplotlib for plotting. You will write a script to read the CSV file and generate a histogram, which is a graph that shows the frequency distribution of the energy deposition values. This process—simulate, save, analyze, visualize—is a fundamental cycle in computational science.",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 3: Acquiring and Analyzing Simulation Data"
+    ]
+  },
+  {
+    "objectID": "lab3_modifyB1/lab3.html#prerequisites",
+    "href": "lab3_modifyB1/lab3.html#prerequisites",
+    "title": "Lab 3: Acquiring and Analyzing Simulation Data",
+    "section": "Prerequisites",
+    "text": "Prerequisites\nBefore you begin, ensure you have the following:\n\nCompleted Lab 2 (successfully built and ran Example B1)\nText editor for C++ code (gedit, nano, or VS Code)\nBasic understanding of C++ syntax (we’ll guide you through the modifications)\nPython 3 installed (should be pre-installed on Ubuntu)",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 3: Acquiring and Analyzing Simulation Data"
+    ]
+  },
+  {
+    "objectID": "lab3_modifyB1/lab3.html#pre-lab-questions",
+    "href": "lab3_modifyB1/lab3.html#pre-lab-questions",
+    "title": "Lab 3: Acquiring and Analyzing Simulation Data",
+    "section": "Pre-Lab Questions",
+    "text": "Pre-Lab Questions\n\nWhat is a CSV file? Why is it a good choice for this lab compared to a more complex format like ROOT?\nWhat is a histogram and what does it show?\nBriefly describe the roles of the pandas and matplotlib Python libraries.\nIn Geant4, what is the difference between a “Run”, an “Event”, and a “Step”?\nWhat does it mean to “score” a quantity in a simulation?",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 3: Acquiring and Analyzing Simulation Data"
+    ]
+  },
+  {
+    "objectID": "lab3_modifyB1/lab3.html#step-1-set-up-the-lab-and-review-the-code-structure",
+    "href": "lab3_modifyB1/lab3.html#step-1-set-up-the-lab-and-review-the-code-structure",
+    "title": "Lab 3: Acquiring and Analyzing Simulation Data",
+    "section": "Step 1: Set Up the Lab and Review the Code Structure",
+    "text": "Step 1: Set Up the Lab and Review the Code Structure\n\nCreate a new directory for this lab and copy the B1 example into it, just as you did in Lab 2:\nmkdir -p ~/g4-labs/lab3\ncd ~/g4-labs/lab3\ncp -r ~/geant4-v11.3.2/examples/basic/B1 .\ncd B1\nBefore we start modifying, let’s understand the key files and the Geant4 action hierarchy:\n\n\n\nGeant4 User Action Classes\n\n\nIn the modern B1 example, all of these classes live inside namespace B1 { ... }. The header and source files do not carry a B1 filename prefix — for example, the run-action class is declared as class RunAction inside namespace B1, in include/RunAction.hh. Every code addition you make in this lab will go inside an existing namespace B1 block in the corresponding .cc file.\nFamiliarize yourself with these key files:\n\ninclude/RunAction.hh & src/RunAction.cc:\n\nControls actions at the beginning and end of a Run (a collection of events)\nWe will edit the source file to open, write, and close the CSV output\n\ninclude/EventAction.hh & src/EventAction.cc:\n\nControls actions at the beginning and end of each Event (simulation of one primary particle)\nWe will edit the source file to record one row of CSV data per event\n\nsrc/SteppingAction.cc:\n\nExecuted at every single Step a particle takes through the geometry\nThe example already collects per-step energy here. We will not modify this file.\n\n\nOpen src/SteppingAction.cc in a text editor and read through UserSteppingAction:\ngedit src/SteppingAction.cc &\nNotice that the example already extracts each step’s energy deposit and adds it to the event total via fEventAction-&gt;AddEdep(edepStep). The data lives in memory but never reaches disk — fixing that is what this lab is about.",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 3: Acquiring and Analyzing Simulation Data"
+    ]
+  },
+  {
+    "objectID": "lab3_modifyB1/lab3.html#step-2-modify-c-code-to-save-data",
+    "href": "lab3_modifyB1/lab3.html#step-2-modify-c-code-to-save-data",
+    "title": "Lab 3: Acquiring and Analyzing Simulation Data",
+    "section": "Step 2: Modify C++ Code to Save Data",
+    "text": "Step 2: Modify C++ Code to Save Data\n\nWhat the example already does\nBefore we add anything, look at how energy already flows through the unmodified B1 example. Open these three files in your editor and find the lines below — you do not need to change them:\n\ninclude/EventAction.hh already declares the helper and the per-event accumulator:\nvoid AddEdep(G4double edep) { fEdep += edep; }\nG4double fEdep = 0.;\nsrc/EventAction.cc already resets fEdep at the start of each event and forwards it to the run action at the end:\nvoid EventAction::BeginOfEventAction(const G4Event*)  { fEdep = 0.; }\nvoid EventAction::EndOfEventAction(const G4Event*)   { fRunAction-&gt;AddEdep(fEdep); }\nsrc/SteppingAction.cc already accumulates each step’s deposit into the event total:\nG4double edepStep = step-&gt;GetTotalEnergyDeposit();\nfEventAction-&gt;AddEdep(edepStep);\n\nSo the per-step → per-event → per-run pipeline is already wired up. The energy lands in fEdep at the end of each event. Our only job in this lab is to also write that value to a CSV file.\n\n\nWhat we’ll change\nThere are exactly two files to edit:\n\nsrc/RunAction.cc — set up the CSV file at the start of the run and write/close it at the end.\nsrc/EventAction.cc — at the end of each event, write fEdep as one new row of the CSV.\n\nThat’s it. Two #include additions and ~12 new lines of code in total.\n\n\n\nG4AnalysisManager Workflow\n\n\n\n\nModification 1: RunAction.cc\nWe use G4AnalysisManager, Geant4’s built-in writer that supports CSV, ROOT, XML, and HDF5. We’ll use CSV.\n\nOpen src/RunAction.cc:\ngedit src/RunAction.cc &\nAdd the analysis-manager header near the other #include lines at the top:\n#include \"G4AnalysisManager.hh\"\nInside RunAction::BeginOfRunAction(const G4Run*), add the following block (anywhere inside the function body is fine — putting it at the top is conventional):\n// --- Lab 3 addition: open CSV and define the per-event ntuple ---\nauto analysisManager = G4AnalysisManager::Instance();\nanalysisManager-&gt;SetDefaultFileType(\"csv\");\nanalysisManager-&gt;OpenFile(\"B1_output\");\n\nanalysisManager-&gt;CreateNtuple(\"B1\", \"Energy Deposition Data\");\nanalysisManager-&gt;CreateNtupleDColumn(\"Edep\");  // column 0\nanalysisManager-&gt;FinishNtuple();\nWhat this does: Tells the analysis manager to write CSV, gives the file a name (B1_output), and declares one ntuple column called Edep. Each row will hold one event’s fEdep.\nInside RunAction::EndOfRunAction(const G4Run* run), add the following at the very end of the function (after the existing G4cout print block):\n// --- Lab 3 addition: flush and close the CSV ---\nauto analysisManager = G4AnalysisManager::Instance();\nanalysisManager-&gt;Write();\nanalysisManager-&gt;CloseFile();\n\n\n\nModification 2: EventAction.cc\n\nOpen src/EventAction.cc:\ngedit src/EventAction.cc &\nAdd the analysis-manager header near the top:\n#include \"G4AnalysisManager.hh\"\nFind the existing EventAction::EndOfEventAction function. It currently looks like this — do not retype it, you are only locating it:\nvoid EventAction::EndOfEventAction(const G4Event*)\n{\n  // accumulate statistics in run action\n  fRunAction-&gt;AddEdep(fEdep);\n}\nInside that function, after the existing fRunAction-&gt;AddEdep(fEdep); line and before the closing }, paste these four lines (and only these four lines):\n// --- Lab 3 addition: also write fEdep to the CSV ---\nauto analysisManager = G4AnalysisManager::Instance();\nanalysisManager-&gt;FillNtupleDColumn(0, fEdep);\nanalysisManager-&gt;AddNtupleRow();\nAfter your edit, the complete function should read:\nvoid EventAction::EndOfEventAction(const G4Event*)\n{\n  // accumulate statistics in run action\n  fRunAction-&gt;AddEdep(fEdep);\n\n  // --- Lab 3 addition: also write fEdep to the CSV ---\n  auto analysisManager = G4AnalysisManager::Instance();\n  analysisManager-&gt;FillNtupleDColumn(0, fEdep);\n  analysisManager-&gt;AddNtupleRow();\n}\nWhat this does: Each event ends with one new row in the CSV containing the total energy deposited in the scoring volume during that event.\n\n\n\nSummary of Modifications\nYou’ve now modified two files:\n\n\n\n\n\n\n\nFile\nChange\n\n\n\n\nsrc/RunAction.cc\nAdd G4AnalysisManager.hh; open the CSV in BeginOfRunAction, write/close it in EndOfRunAction\n\n\nsrc/EventAction.cc\nAdd G4AnalysisManager.hh; in EndOfEventAction, fill one ntuple row per event\n\n\n\nNote that EventAction.hh, SteppingAction.cc, and the energy-accumulation logic itself were left untouched — the example already had everything we needed up to the point of writing to disk.",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 3: Acquiring and Analyzing Simulation Data"
+    ]
+  },
+  {
+    "objectID": "lab3_modifyB1/lab3.html#step-3-compile-and-run-the-modified-application",
+    "href": "lab3_modifyB1/lab3.html#step-3-compile-and-run-the-modified-application",
+    "title": "Lab 3: Acquiring and Analyzing Simulation Data",
+    "section": "Step 3: Compile and Run the Modified Application",
+    "text": "Step 3: Compile and Run the Modified Application\nNow let’s compile your modified code and generate some data!\n\nNavigate to the build directory (create one if it doesn’t exist):\nmkdir -p build\ncd build\nConfigure the build with CMake:\ncmake ..\nCompile the modified application:\nmake -j$(nproc)\nIf you encounter errors, carefully check your code modifications against the instructions. Common issues:\n\nMissing semicolons\nIncorrect placement of code\nTypos in variable names\n\n\n\n\n\nSuccessful Compilation\n\n\n\nCreate a macro file for data collection. In the B1 directory (not build), create lab3.mac:\ncd ..\nnano lab3.mac\nAdd these contents:\n# Lab 3 Data Collection Run\n# Simulate 10,000 events with default 6 MeV gammas\n\n# Force single-threaded mode so we get ONE CSV file, not one per worker.\n# Must come BEFORE /run/initialize.\n/run/numberOfThreads 1\n\n/run/initialize\n/run/printProgress 1000\n/run/beamOn 10000\nThis will run 10,000 events and print progress every 1,000 events. /run/numberOfThreads 1 keeps Geant4 from running multi-threaded, which would otherwise produce one CSV file per worker thread.\nRun the simulation:\ncd build\n./exampleB1 ../lab3.mac\nAfter completion, list the CSV files:\nls -lh *.csv\nYou should see one file named B1_output_nt_B1_t0.csv. Geant4’s CSV writer always appends a _tN worker-thread suffix; with one thread, that’s _t0. If you see multiple _tN.csv files, you forgot /run/numberOfThreads 1 — delete them and re-run.\nView the first few lines:\nhead -20 B1_output_nt_B1_t0.csv\nYou should see a header row followed by numerical energy values in MeV.\n\n\n\n\nCSV Output Preview",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 3: Acquiring and Analyzing Simulation Data"
+    ]
+  },
+  {
+    "objectID": "lab3_modifyB1/lab3.html#step-4-install-python-analysis-libraries",
+    "href": "lab3_modifyB1/lab3.html#step-4-install-python-analysis-libraries",
+    "title": "Lab 3: Acquiring and Analyzing Simulation Data",
+    "section": "Step 4: Install Python Analysis Libraries",
+    "text": "Step 4: Install Python Analysis Libraries\nBefore we can analyze our data, we need to install the required Python packages.\n\nFirst, check if pip is installed:\npip3 --version\nIf needed, install pip:\nsudo apt install python3-pip\nInstall pandas and matplotlib:\npip3 install --break-system-packages pandas matplotlib numpy\nWhy the --break-system-packages flag? Recent versions of Ubuntu (24.04+) follow PEP 668 and mark the system Python environment as “externally managed”, so a plain pip3 install pandas will refuse to run with an error: externally-managed-environment message. The flag tells pip to install into the user site-packages directory anyway, which is fine for this VM-based course where we are not maintaining the host system. (In a production environment you would create a virtual environment with python3 -m venv instead.)\nThese packages provide:\n\npandas: Data manipulation and analysis\nmatplotlib: Creating visualizations and plots\nnumpy: Numerical computing (dependency for pandas)\n\n\n\n\n\nPython Package Installation\n\n\n\nVerify the installation:\npython3 -c \"import pandas; import matplotlib; print('Success!')\"",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 3: Acquiring and Analyzing Simulation Data"
+    ]
+  },
+  {
+    "objectID": "lab3_modifyB1/lab3.html#step-5-analyze-the-data-with-python---basic-analysis",
+    "href": "lab3_modifyB1/lab3.html#step-5-analyze-the-data-with-python---basic-analysis",
+    "title": "Lab 3: Acquiring and Analyzing Simulation Data",
+    "section": "Step 5: Analyze the Data with Python - Basic Analysis",
+    "text": "Step 5: Analyze the Data with Python - Basic Analysis\nNow let’s create a Python script to analyze our simulation data.\nIn your B1/build directory, create analyze_basic.py:\nnano analyze_basic.py\nPaste the following content. Important: the code must start at column 0 (no leading whitespace), or Python will reject it with IndentationError: unexpected indent.\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\n# --- Load the Data ---\n# Geant4's CSV output begins with metadata lines starting with '#'\n# (e.g. \"#class tools::wcsv::ntuple\", \"#column double Edep\").\n# We tell pandas to skip those and supply the column name ourselves.\nprint(\"=\" * 50)\nprint(\"GEANT4 SIMULATION DATA ANALYSIS\")\nprint(\"=\" * 50)\nprint(\"\\nReading data from B1_output_nt_B1_t0.csv...\")\n\ndata = pd.read_csv('B1_output_nt_B1_t0.csv',\n                   comment='#', header=None, names=['Edep'])\n\nprint(f\"Data loaded: {len(data)} events, shape {data.shape}\")\nprint(\"\\nFirst 10 energy deposition values (MeV):\")\nprint(data.head(10))\n\n# --- Basic Statistics ---\nprint(\"\\n\" + \"=\" * 50)\nprint(\"BASIC STATISTICS\")\nprint(\"=\" * 50)\n\nmean_edep = data['Edep'].mean()\nstd_edep = data['Edep'].std()\nmedian_edep = data['Edep'].median()\n\nprint(f\"Mean Energy Deposition:     {mean_edep:.4f} MeV\")\nprint(f\"Standard Deviation:         {std_edep:.4f} MeV\")\nprint(f\"Median:                     {median_edep:.4f} MeV\")\nprint(f\"Minimum:                    {data['Edep'].min():.4f} MeV\")\nprint(f\"Maximum:                    {data['Edep'].max():.4f} MeV\")\n\npercentiles = data['Edep'].quantile([0.25, 0.5, 0.75, 0.90, 0.95])\nprint(f\"\\nPercentiles:\")\nprint(f\"  25th percentile (Q1):     {percentiles[0.25]:.4f} MeV\")\nprint(f\"  50th percentile (median): {percentiles[0.50]:.4f} MeV\")\nprint(f\"  75th percentile (Q3):     {percentiles[0.75]:.4f} MeV\")\nprint(f\"  90th percentile:          {percentiles[0.90]:.4f} MeV\")\nprint(f\"  95th percentile:          {percentiles[0.95]:.4f} MeV\")\n\n# --- Histogram ---\nplt.figure(figsize=(12, 8))\nplt.hist(data['Edep'], bins=100, alpha=0.75,\n         color='steelblue', edgecolor='black')\nplt.axvline(mean_edep, color='red', linestyle='--',\n            linewidth=2, label=f'Mean: {mean_edep:.3f} MeV')\nplt.axvline(median_edep, color='green', linestyle='--',\n            linewidth=2, label=f'Median: {median_edep:.3f} MeV')\n\nplt.title(f'Energy Deposition Distribution for 6 MeV Gammas\\n({len(data)} events)',\n          fontsize=14, fontweight='bold')\nplt.xlabel('Energy Deposited (MeV)', fontsize=12)\nplt.ylabel('Frequency (Number of Events)', fontsize=12)\nplt.grid(True, alpha=0.3)\nplt.legend(fontsize=10)\n\nstats_text = f'mu = {mean_edep:.3f} MeV\\nsigma = {std_edep:.3f} MeV\\nEvents = {len(data)}'\nplt.text(0.98, 0.97, stats_text, transform=plt.gca().transAxes,\n         fontsize=11, verticalalignment='top', horizontalalignment='right',\n         bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))\n\nplt.tight_layout()\nplt.savefig('edep_histogram.png', dpi=300)\nprint(\"\\nHistogram saved to edep_histogram.png\")\nSave and close, then run:\npython3 analyze_basic.py\nView the generated histogram:\neog edep_histogram.png\n(Or use your preferred image viewer.)\n\n\n\nEnergy Deposition Histogram",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 3: Acquiring and Analyzing Simulation Data"
+    ]
+  },
+  {
+    "objectID": "lab3_modifyB1/lab3.html#step-6-advanced-analysis---data-filtering-and-comparison",
+    "href": "lab3_modifyB1/lab3.html#step-6-advanced-analysis---data-filtering-and-comparison",
+    "title": "Lab 3: Acquiring and Analyzing Simulation Data",
+    "section": "Step 6: Advanced Analysis - Data Filtering and Comparison",
+    "text": "Step 6: Advanced Analysis - Data Filtering and Comparison\nLet’s explore pandas’ powerful data manipulation capabilities by filtering the data and creating comparative visualizations.\nCreate analyze_advanced.py:\nnano analyze_advanced.py\nPaste the following content (must start at column 0 — no leading whitespace):\nimport pandas as pd\nimport matplotlib.pyplot as plt\nimport numpy as np\n\nprint(\"Loading simulation data...\")\ndata = pd.read_csv('B1_output_nt_B1_t0.csv',\n                   comment='#', header=None, names=['Edep'])\n\n# --- Data Filtering Examples ---\nprint(\"\\n\" + \"=\" * 50)\nprint(\"DATA FILTERING EXAMPLES\")\nprint(\"=\" * 50)\n\nhigh_energy = data[data['Edep'] &gt; 4.0]\nprint(f\"\\nEvents with Edep &gt; 4.0 MeV: {len(high_energy)} \"\n      f\"({len(high_energy)/len(data)*100:.1f}%)\")\n\nlow_energy = data[data['Edep'] &lt; 1.0]\nprint(f\"Events with Edep &lt; 1.0 MeV: {len(low_energy)} \"\n      f\"({len(low_energy)/len(data)*100:.1f}%)\")\n\nzero_energy = data[data['Edep'] == 0.0]\nprint(f\"Events with Edep = 0.0 MeV: {len(zero_energy)} \"\n      f\"({len(zero_energy)/len(data)*100:.1f}%)\")\nprint(\"  -&gt; These are events where the particle passed through \"\n      \"without interacting\")\n\nmid_range = data[(data['Edep'] &gt;= 2.0) & (data['Edep'] &lt;= 4.0)]\nprint(f\"Events with 2.0 &lt;= Edep &lt;= 4.0 MeV: {len(mid_range)} \"\n      f\"({len(mid_range)/len(data)*100:.1f}%)\")\n\n# --- Multi-Panel Figure ---\nfig, axes = plt.subplots(2, 2, figsize=(14, 10))\nfig.suptitle('Advanced Energy Deposition Analysis',\n             fontsize=16, fontweight='bold')\n\n# Panel 1: Full distribution\nax1 = axes[0, 0]\nax1.hist(data['Edep'], bins=100, color='steelblue',\n         alpha=0.7, edgecolor='black')\nax1.set_xlabel('Energy Deposited (MeV)')\nax1.set_ylabel('Frequency')\nax1.set_title(f'Full Distribution (n={len(data)})')\nax1.grid(True, alpha=0.3)\n\n# Panel 2: Excluding zero-energy events\nax2 = axes[0, 1]\nnon_zero = data[data['Edep'] &gt; 0]\nax2.hist(non_zero['Edep'], bins=80, color='coral',\n         alpha=0.7, edgecolor='black')\nax2.set_xlabel('Energy Deposited (MeV)')\nax2.set_ylabel('Frequency')\nax2.set_title(f'Non-Zero Events Only (n={len(non_zero)})')\nax2.grid(True, alpha=0.3)\n\n# Panel 3: Cumulative distribution\nax3 = axes[1, 0]\nsorted_data = np.sort(data['Edep'])\ncumulative = np.arange(1, len(sorted_data) + 1) / len(sorted_data) * 100\nax3.plot(sorted_data, cumulative, linewidth=2, color='darkgreen')\nax3.set_xlabel('Energy Deposited (MeV)')\nax3.set_ylabel('Cumulative Percentage (%)')\nax3.set_title('Cumulative Distribution Function')\nax3.grid(True, alpha=0.3)\nax3.axhline(50, color='red', linestyle='--', alpha=0.5, label='50%')\nax3.axhline(95, color='orange', linestyle='--', alpha=0.5, label='95%')\nax3.legend()\n\n# Panel 4: Box plot\nax4 = axes[1, 1]\nbox_data = [data['Edep'], non_zero['Edep']]\nbp = ax4.boxplot(box_data, labels=['All Events', 'Non-Zero Only'],\n                 patch_artist=True, showmeans=True)\nfor patch, color in zip(bp['boxes'], ['lightblue', 'lightcoral']):\n    patch.set_facecolor(color)\nax4.set_ylabel('Energy Deposited (MeV)')\nax4.set_title('Box Plot Comparison')\nax4.grid(True, alpha=0.3, axis='y')\n\nplt.tight_layout()\nplt.savefig('edep_advanced_analysis.png', dpi=300)\nprint(\"\\nAdvanced analysis figure saved to edep_advanced_analysis.png\")\n\n# --- Statistical Comparison ---\nprint(\"\\n\" + \"=\" * 50)\nprint(\"STATISTICAL COMPARISON\")\nprint(\"=\" * 50)\nprint(\"\\nAll Events:\")\nprint(f\"  Mean:   {data['Edep'].mean():.4f} MeV\")\nprint(f\"  Median: {data['Edep'].median():.4f} MeV\")\nprint(f\"  Std:    {data['Edep'].std():.4f} MeV\")\nprint(\"\\nNon-Zero Events Only:\")\nprint(f\"  Mean:   {non_zero['Edep'].mean():.4f} MeV\")\nprint(f\"  Median: {non_zero['Edep'].median():.4f} MeV\")\nprint(f\"  Std:    {non_zero['Edep'].std():.4f} MeV\")\n\nprint(\"\\n\" + \"=\" * 50)\nprint(\"DETAILED SUMMARY STATISTICS\")\nprint(\"=\" * 50)\nprint(data['Edep'].describe())\nRun it and view the figure:\npython3 analyze_advanced.py\neog edep_advanced_analysis.png\n\n\n\nAdvanced Analysis Multi-Panel",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 3: Acquiring and Analyzing Simulation Data"
+    ]
+  },
+  {
+    "objectID": "lab3_modifyB1/lab3.html#step-7-comparing-different-particle-types",
+    "href": "lab3_modifyB1/lab3.html#step-7-comparing-different-particle-types",
+    "title": "Lab 3: Acquiring and Analyzing Simulation Data",
+    "section": "Step 7: Comparing Different Particle Types",
+    "text": "Step 7: Comparing Different Particle Types\nLet’s generate data for different particles and compare their energy deposition patterns.\n\nCreate macro files for different particles. First, protons:\ncd ~/g4-labs/lab3/B1\nnano proton_beam.mac\nAdd:\n/run/numberOfThreads 1\n/run/initialize\n/gun/particle proton\n/gun/energy 150 MeV\n/run/printProgress 1000\n/run/beamOn 10000\nCreate electron beam macro:\nnano electron_beam.mac\nAdd:\n/run/numberOfThreads 1\n/run/initialize\n/gun/particle e-\n/gun/energy 50 MeV\n/run/printProgress 1000\n/run/beamOn 10000\nRun simulations and rename output files. Remember: each run produces B1_output_nt_B1_t0.csv, so we rename it after each run before it gets overwritten.\ncd build\n\n# Run gamma simulation (already done, but let's be explicit)\n./exampleB1 ../lab3.mac\nmv B1_output_nt_B1_t0.csv gamma_6MeV.csv\n\n# Run proton simulation\n./exampleB1 ../proton_beam.mac\nmv B1_output_nt_B1_t0.csv proton_150MeV.csv\n\n# Run electron simulation\n./exampleB1 ../electron_beam.mac\nmv B1_output_nt_B1_t0.csv electron_50MeV.csv\n\nCreate the comparison script:\nnano compare_particles.py\nPaste the following content (must start at column 0 — no leading whitespace):\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\n# All three CSVs were produced by the modified B1, so they share the\n# same Geant4 header format. We supply the column name ourselves.\nread_kwargs = dict(comment='#', header=None, names=['Edep'])\n\nprint(\"Loading particle data...\")\ngamma_data    = pd.read_csv('gamma_6MeV.csv',    **read_kwargs)\nproton_data   = pd.read_csv('proton_150MeV.csv', **read_kwargs)\nelectron_data = pd.read_csv('electron_50MeV.csv', **read_kwargs)\n\nfig, axes = plt.subplots(2, 2, figsize=(14, 10))\nfig.suptitle('Particle Type Comparison: Energy Deposition',\n             fontsize=16, fontweight='bold')\n\nax1 = axes[0, 0]\nax1.hist(gamma_data['Edep'], bins=80, alpha=0.7,\n         color='blue', label='6 MeV gamma', edgecolor='black')\nax1.set_xlabel('Energy Deposited (MeV)')\nax1.set_ylabel('Frequency')\nax1.set_title('Gamma Rays (6 MeV)')\nax1.legend()\nax1.grid(True, alpha=0.3)\n\nax2 = axes[0, 1]\nax2.hist(proton_data['Edep'], bins=80, alpha=0.7,\n         color='red', label='150 MeV p+', edgecolor='black')\nax2.set_xlabel('Energy Deposited (MeV)')\nax2.set_ylabel('Frequency')\nax2.set_title('Protons (150 MeV)')\nax2.legend()\nax2.grid(True, alpha=0.3)\n\nax3 = axes[1, 0]\nax3.hist(electron_data['Edep'], bins=80, alpha=0.7,\n         color='green', label='50 MeV e-', edgecolor='black')\nax3.set_xlabel('Energy Deposited (MeV)')\nax3.set_ylabel('Frequency')\nax3.set_title('Electrons (50 MeV)')\nax3.legend()\nax3.grid(True, alpha=0.3)\n\n# Normalized overlay\nax4 = axes[1, 1]\nax4.hist(gamma_data['Edep'], bins=60, alpha=0.5, color='blue',\n         label=f'gamma (mu={gamma_data[\"Edep\"].mean():.2f})', density=True)\nax4.hist(proton_data['Edep'], bins=60, alpha=0.5, color='red',\n         label=f'p+ (mu={proton_data[\"Edep\"].mean():.2f})', density=True)\nax4.hist(electron_data['Edep'], bins=60, alpha=0.5, color='green',\n         label=f'e- (mu={electron_data[\"Edep\"].mean():.2f})', density=True)\nax4.set_xlabel('Energy Deposited (MeV)')\nax4.set_ylabel('Probability Density')\nax4.set_title('Normalized Overlay Comparison')\nax4.legend()\nax4.grid(True, alpha=0.3)\n\nplt.tight_layout()\nplt.savefig('particle_comparison.png', dpi=300)\nprint(\"Comparison figure saved to particle_comparison.png\")\n\nprint(\"\\n\" + \"=\" * 60)\nprint(\"STATISTICAL COMPARISON BY PARTICLE TYPE\")\nprint(\"=\" * 60)\n\nfor name, df in [('Gamma (6 MeV)',    gamma_data),\n                 ('Proton (150 MeV)', proton_data),\n                 ('Electron (50 MeV)', electron_data)]:\n    n_zero = (df['Edep'] == 0).sum()\n    print(f\"\\n{name}:\")\n    print(f\"  Mean:        {df['Edep'].mean():.4f} MeV\")\n    print(f\"  Median:      {df['Edep'].median():.4f} MeV\")\n    print(f\"  Std Dev:     {df['Edep'].std():.4f} MeV\")\n    print(f\"  Max:         {df['Edep'].max():.4f} MeV\")\n    print(f\"  Zero events: {n_zero} ({n_zero/len(df)*100:.1f}%)\")\nRun it:\npython3 compare_particles.py\n\n\n\nParticle Type Comparison",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 3: Acquiring and Analyzing Simulation Data"
+    ]
+  },
+  {
+    "objectID": "lab3_modifyB1/lab3.html#analysis-questions",
+    "href": "lab3_modifyB1/lab3.html#analysis-questions",
+    "title": "Lab 3: Acquiring and Analyzing Simulation Data",
+    "section": "Analysis Questions",
+    "text": "Analysis Questions\nNow that you have generated and analyzed the data, answer these questions:\n\nPart 1: Understanding the Distribution\n\nDescribe the shape of the energy deposition histogram for gamma rays. Is the energy deposition the same for every event?\nWhy is there a distribution of values instead of a single value? Consider:\n\nStochastic nature of particle interactions\nDifferent interaction mechanisms (photoelectric, Compton, pair production)\nVariation in secondary particle production\n\nThe peak of the distribution represents the most probable energy deposition. What is this value approximately? How does it compare to the initial energy of the gamma particle (6 MeV)?\nExplain why the deposited energy is typically lower than the incident energy. (Hint: Does the particle always deposit all of its energy in the detector?)\n\n\n\nPart 2: Understanding Zero Energy Events\n\nWhat percentage of events have zero energy deposition? What does this represent physically?\nWhy would a 6 MeV gamma ray pass through the detector without depositing any energy?\n\n\n\nPart 3: Comparing Particle Types\n\nCompare the mean energy deposition for:\n\n6 MeV gammas\n150 MeV protons\n\n50 MeV electrons\n\nWhich particle type deposits the most energy on average? Why?\nWhich particle type has the most consistent energy deposition (smallest standard deviation)? Explain this in terms of the physics of how each particle type interacts with matter.\nNotice the shape differences in the distributions:\n\nGammas: Broad, exponential-like distribution\nProtons: Sharp, peaked distribution\nElectrons: Intermediate characteristics\n\nExplain these shape differences based on the interaction mechanisms of each particle type.\n\n\n\nPart 4: Pandas Data Analysis\n\nIn the advanced analysis script, we filtered events with data[data['Edep'] &gt; 4.0]. Explain in plain English what this pandas operation does.\nWhat is the advantage of using pandas DataFrames versus manipulating the CSV file directly with basic Python?\nThe cumulative distribution plot shows what percentage of events have energy deposition below a certain value. What is the energy value at which 50% of events fall below? What is this called statistically?\n\n\n\nPart 5: Scientific Workflow\n\nWhy is CSV a good intermediate format for this analysis workflow (Geant4 → CSV → Python)?\nHow would you modify the code to save additional information, such as:\n\nThe number of steps per event\nEnergy deposited in different detector volumes\nParticle type information for secondary particles",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 3: Acquiring and Analyzing Simulation Data"
+    ]
+  },
+  {
+    "objectID": "lab3_modifyB1/lab3.html#troubleshooting",
+    "href": "lab3_modifyB1/lab3.html#troubleshooting",
+    "title": "Lab 3: Acquiring and Analyzing Simulation Data",
+    "section": "Troubleshooting",
+    "text": "Troubleshooting\nCommon issues and solutions:\n\n“No module named ‘pandas’”: Install with pip3 install --break-system-packages pandas matplotlib numpy.\nerror: externally-managed-environment from pip: Ubuntu 24.04+ marks the system Python as managed (PEP 668). Re-run with --break-system-packages, as shown in Step 4.\nMany B1_output_nt_B1_tN.csv files instead of one _t0.csv: Geant4 ran multi-threaded and each worker thread wrote its own CSV. Add /run/numberOfThreads 1 to your macro before /run/initialize, delete the per-thread files (rm B1_output_nt_B1_t*.csv), and re-run.\nCSV file not found: Make sure you’re running Python from the build directory and that the filename in pd.read_csv(...) matches what ls *.csv shows.\nEmpty histogram: Check that your CSV file has data and proper column headers\nCompilation errors: Verify all code modifications carefully match the instructions\nG4AnalysisManager errors: Ensure you’ve included the header file in all necessary source files",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 3: Acquiring and Analyzing Simulation Data"
+    ]
+  },
+  {
+    "objectID": "lab3_modifyB1/lab3.html#verification-checklist",
+    "href": "lab3_modifyB1/lab3.html#verification-checklist",
+    "title": "Lab 3: Acquiring and Analyzing Simulation Data",
+    "section": "Verification Checklist",
+    "text": "Verification Checklist\nBefore completing this lab, verify you can:\n\nModify Geant4 C++ source code to add data output\nUse G4AnalysisManager to create and write CSV files\nCompile modified Geant4 applications\nGenerate simulation data with multiple particle types\nLoad CSV data into pandas DataFrames\nCalculate statistical measures (mean, std, median, percentiles)\nCreate histograms with matplotlib\nFilter and manipulate data using pandas operations\nCreate multi-panel figures for comparative analysis\nInterpret energy deposition distributions physically",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 3: Acquiring and Analyzing Simulation Data"
+    ]
+  },
+  {
+    "objectID": "lab3_modifyB1/lab3.html#conclusion",
+    "href": "lab3_modifyB1/lab3.html#conclusion",
+    "title": "Lab 3: Acquiring and Analyzing Simulation Data",
+    "section": "Conclusion",
+    "text": "Conclusion\nYou have successfully modified a Geant4 application to output data, run simulations with different particle types, and performed sophisticated data analysis using Python’s pandas and matplotlib libraries. You’ve learned:\n\nHow Geant4’s action classes work together to record simulation data\nThe modern approach to data output using G4AnalysisManager\nEssential pandas operations for data manipulation and analysis\nCreating publication-quality visualizations with matplotlib\nThe scientific workflow from simulation to analysis to visualization\n\nThese skills are fundamental for computational physics and will be used throughout the remainder of this course and in professional scientific computing work.",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 3: Acquiring and Analyzing Simulation Data"
+    ]
+  },
+  {
+    "objectID": "lab3_modifyB1/lab3.html#references",
+    "href": "lab3_modifyB1/lab3.html#references",
+    "title": "Lab 3: Acquiring and Analyzing Simulation Data",
+    "section": "References",
+    "text": "References\n\nGeant4 Collaboration. (n.d.). Geant4 Analysis Tools Documentation\nHrivnacova, I. (2018). Using Geant4 Analysis Manager\nHrivnacova, I. (2023). Geant4 Analysis Tools Tutorial\nMcKinney, W. (2010). Data Structures for Statistical Computing in Python\nHunter, J. D. (2007). Matplotlib: A 2D Graphics Environment\nThe Python Graph Gallery. (n.d.). Histogram Examples",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 3: Acquiring and Analyzing Simulation Data"
+    ]
+  },
+  {
+    "objectID": "lab3_modifyB1/lab3.html#additional-resources",
+    "href": "lab3_modifyB1/lab3.html#additional-resources",
+    "title": "Lab 3: Acquiring and Analyzing Simulation Data",
+    "section": "Additional Resources",
+    "text": "Additional Resources\n\nPandas Documentation\nMatplotlib Gallery\nGeant4 Analysis Manager Examples\nPython Data Science Handbook",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 3: Acquiring and Analyzing Simulation Data"
+    ]
+  },
+  {
+    "objectID": "lab3_modifyB1/lab3.html#optional-extensions",
+    "href": "lab3_modifyB1/lab3.html#optional-extensions",
+    "title": "Lab 3: Acquiring and Analyzing Simulation Data",
+    "section": "Optional Extensions",
+    "text": "Optional Extensions\nIf you finish early or want to explore further:\n\nAdd More Columns: Modify the code to save additional data:\n\nTrack length\nNumber of steps\nParticle position at end of event\n\nDifferent Geometries: Modify the detector geometry in DetectorConstruction.cc and observe how it affects energy deposition\nEnergy Scan: Create a script that runs simulations at multiple energies (e.g., 1, 2, 4, 6, 8, 10 MeV) and plots how mean energy deposition varies with incident energy\nInteractive Plotting: Modify the Python scripts to use plt.show() for interactive exploration of the data\nStatistical Tests: Use scipy to perform statistical tests comparing different datasets (t-tests, KS tests, etc.)",
+    "crumbs": [
+      "Home",
+      "Labs",
+      "Lab 3: Acquiring and Analyzing Simulation Data"
+    ]
+  }
+]

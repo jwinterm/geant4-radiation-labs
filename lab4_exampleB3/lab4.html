@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.41">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="John Murphy and Steven Carlson">
+<meta name="dcterms.date" content="2025-11-11">
+
+<title>Lab 4: Medical Physics Application - A PET Scanner – Geant4 Radiation Labs</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../lab3_modifyB1/lab3.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-48ffa3e5b9d089919c6712c39e5b00f2.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-c85aa45615bc724621e561d3dca1e930.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar docked nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Geant4 Radiation Labs</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../lab1_setup/lab1.html"> 
+<span class="menu-text">Lab 1: Setup</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../lab2_exampleB1/lab2.html"> 
+<span class="menu-text">Lab 2: B1</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../lab3_modifyB1/lab3.html"> 
+<span class="menu-text">Lab 3: Modify B1</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../lab4_exampleB3/lab4.html"> 
+<span class="menu-text">Lab 4: PET (B3a)</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/jwinterm/geant4-radiation-labs"> <i class="bi bi-github" role="img" aria-label="GitHub repo">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../lab1_setup/lab1.html">Labs</a></li><li class="breadcrumb-item"><a href="../lab4_exampleB3/lab4.html">Lab 4: Medical Physics Application - A PET Scanner</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Labs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lab1_setup/lab1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 1: Setting Up Linux and Building Geant4</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lab2_exampleB1/lab2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 2: First Simulation - Building and Running Geant4 Example B1</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lab3_modifyB1/lab3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 3: Acquiring and Analyzing Simulation Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lab4_exampleB3/lab4.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Lab 4: Medical Physics Application - A PET Scanner</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link" data-scroll-target="#prerequisites">Prerequisites</a></li>
+  <li><a href="#pre-lab-questions" id="toc-pre-lab-questions" class="nav-link" data-scroll-target="#pre-lab-questions">Pre-Lab Questions</a></li>
+  <li><a href="#step-1-set-up-and-compile-the-b3a-example" id="toc-step-1-set-up-and-compile-the-b3a-example" class="nav-link" data-scroll-target="#step-1-set-up-and-compile-the-b3a-example">Step 1: Set Up and Compile the B3a Example</a></li>
+  <li><a href="#step-2-visualize-the-pet-scanner-geometry" id="toc-step-2-visualize-the-pet-scanner-geometry" class="nav-link" data-scroll-target="#step-2-visualize-the-pet-scanner-geometry">Step 2: Visualize the PET Scanner Geometry</a></li>
+  <li><a href="#step-3-modify-the-c-code-to-record-crystal-hits" id="toc-step-3-modify-the-c-code-to-record-crystal-hits" class="nav-link" data-scroll-target="#step-3-modify-the-c-code-to-record-crystal-hits">Step 3: Modify the C++ Code to Record Crystal Hits</a>
+  <ul class="collapse">
+  <li><a href="#modification-runaction.cc" id="toc-modification-runaction.cc" class="nav-link" data-scroll-target="#modification-runaction.cc">Modification: RunAction.cc</a></li>
+  </ul></li>
+  <li><a href="#step-4-compile-run-and-inspect-the-output" id="toc-step-4-compile-run-and-inspect-the-output" class="nav-link" data-scroll-target="#step-4-compile-run-and-inspect-the-output">Step 4: Compile, Run, and Inspect the Output</a></li>
+  <li><a href="#step-5-plot-the-energy-spectrum" id="toc-step-5-plot-the-energy-spectrum" class="nav-link" data-scroll-target="#step-5-plot-the-energy-spectrum">Step 5: Plot the Energy Spectrum</a></li>
+  <li><a href="#step-6-coincidence-analysis-and-lines-of-response" id="toc-step-6-coincidence-analysis-and-lines-of-response" class="nav-link" data-scroll-target="#step-6-coincidence-analysis-and-lines-of-response">Step 6: Coincidence Analysis and Lines of Response</a></li>
+  <li><a href="#analysis-questions" id="toc-analysis-questions" class="nav-link" data-scroll-target="#analysis-questions">Analysis Questions</a>
+  <ul class="collapse">
+  <li><a href="#energy-spectrum" id="toc-energy-spectrum" class="nav-link" data-scroll-target="#energy-spectrum">Energy Spectrum</a></li>
+  <li><a href="#coincidence-logic" id="toc-coincidence-logic" class="nav-link" data-scroll-target="#coincidence-logic">Coincidence Logic</a></li>
+  <li><a href="#lines-of-response" id="toc-lines-of-response" class="nav-link" data-scroll-target="#lines-of-response">Lines of Response</a></li>
+  <li><a href="#workflow" id="toc-workflow" class="nav-link" data-scroll-target="#workflow">Workflow</a></li>
+  </ul></li>
+  <li><a href="#troubleshooting" id="toc-troubleshooting" class="nav-link" data-scroll-target="#troubleshooting">Troubleshooting</a></li>
+  <li><a href="#verification-checklist" id="toc-verification-checklist" class="nav-link" data-scroll-target="#verification-checklist">Verification Checklist</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  <li><a href="#optional-extensions" id="toc-optional-extensions" class="nav-link" data-scroll-target="#optional-extensions">Optional Extensions</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../lab1_setup/lab1.html">Labs</a></li><li class="breadcrumb-item"><a href="../lab4_exampleB3/lab4.html">Lab 4: Medical Physics Application - A PET Scanner</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Lab 4: Medical Physics Application - A PET Scanner</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>John Murphy and Steven Carlson </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">November 11, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="learning-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
+<p>In this final lab, you will apply all the skills you have developed to a more complex and realistic application: a Positron Emission Tomography (PET) scanner. By the end of this session, you will be able to:</p>
+<ul>
+<li>Explain the basic operating principle of a PET scanner</li>
+<li>Compile and visualize a complex multi-volume detector geometry</li>
+<li>Use Geant4’s primitive scorer / hits-collection system to record per-crystal energy deposits</li>
+<li>Generate and interpret an energy spectrum from a simulated radiation detector</li>
+<li>Identify a “photopeak” and connect it to the underlying physics</li>
+<li>Reconstruct the spatial arrangement of detector hits and identify coincident events</li>
+<li>Draw “lines of response” connecting coincident hits, the building block of PET image reconstruction</li>
+</ul>
+</section>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Positron Emission Tomography (PET) is a medical imaging technique used to visualize metabolic processes in the body, especially in oncology. The patient is given a radiotracer such as Fluorine-18 (F-18), a positron-emitting isotope. When an F-18 nucleus decays, it emits a positron. The positron travels a very short distance through tissue before encountering an electron, and the matter–antimatter pair annihilates, converting their rest mass into two gamma-ray photons.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/annihilation_diagram.png" class="img-fluid figure-img"></p>
+<figcaption>Positron Annihilation Diagram</figcaption>
+</figure>
+</div>
+<p>To conserve momentum, the two photons fly off in nearly opposite directions, and each has an energy of 511 keV — the rest mass energy of an electron. A PET scanner is essentially a ring of scintillator detectors designed to detect these photon pairs arriving at almost the same time (in “coincidence”). By recording many such pairs and tracing the line connecting each pair back through the patient, a computer reconstructs an image of where the tracer accumulated.</p>
+<p>In this lab, we use <strong>Geant4 Example B3a</strong>, a simplified PET scanner simulation. Our goal is to:</p>
+<ol type="1">
+<li>Record the energy deposited in each scintillator crystal for every event.</li>
+<li>Plot an energy spectrum and identify the <strong>511 keV photopeak</strong> — the signature of a gamma ray fully absorbed by a single crystal.</li>
+<li>Find events with two photopeak hits in coincidence and draw the <strong>lines of response (LOR)</strong> that connect them.</li>
+</ol>
+</section>
+<section id="prerequisites" class="level2">
+<h2 class="anchored" data-anchor-id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Completed Lab 3 (familiarity with <code>G4AnalysisManager</code>, pandas, and matplotlib)</li>
+<li>Basic understanding of beta-plus decay and electron-positron annihilation</li>
+<li>C++ and Python environments configured from previous labs</li>
+</ul>
+</section>
+<section id="pre-lab-questions" class="level2">
+<h2 class="anchored" data-anchor-id="pre-lab-questions">Pre-Lab Questions</h2>
+<ol type="1">
+<li>What is positron-electron annihilation, and why does it produce two photons rather than one?</li>
+<li>What is the energy of each annihilation photon, and why is this specific energy important for PET?</li>
+<li>In a detector energy spectrum, what does the “photopeak” represent? What is the “Compton continuum”?</li>
+<li>Why does PET imaging rely on detecting two photons in <em>coincidence</em> rather than one at a time?</li>
+</ol>
+</section>
+<section id="step-1-set-up-and-compile-the-b3a-example" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-set-up-and-compile-the-b3a-example">Step 1: Set Up and Compile the B3a Example</h2>
+<p>The B3 example contains two sub-projects, <code>B3a</code> and <code>B3b</code>. They share geometry and physics, but differ in how event-level statistics are accumulated. We will use <code>B3a</code>.</p>
+<ol type="1">
+<li><p>Create a lab directory and copy the B3 source tree into it:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> ~/g4-labs/lab4</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/g4-labs/lab4</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="at">-r</span> ~/geant4-v11.3.2/examples/basic/B3 .</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> B3/B3a</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Create a build directory and configure with CMake:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> build</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> build</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cmake</span> ..</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Compile the application:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> <span class="at">-j</span><span class="va">$(</span><span class="fu">nproc</span><span class="va">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The executable will be named <code>exampleB3a</code>.</p></li>
+</ol>
+</section>
+<section id="step-2-visualize-the-pet-scanner-geometry" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-visualize-the-pet-scanner-geometry">Step 2: Visualize the PET Scanner Geometry</h2>
+<p>Before running a long simulation, look at the detector to understand what we are simulating.</p>
+<ol type="1">
+<li><p>Run the application in interactive mode:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./exampleB3a</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>The Qt GUI will open. The geometry is more complex than B1: rings of scintillator crystals surround a central cylinder representing a patient phantom.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/b3_geometry.png" class="img-fluid figure-img"></p>
+<figcaption>B3 PET Scanner Geometry</figcaption>
+</figure>
+</div></li>
+<li><p>Fire a few events to see particles produced by F-18 decay:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">/run/beamOn</span> 5</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You should see positron tracks (short, in the phantom) followed by pairs of gamma tracks heading to opposite sides of the ring.</p></li>
+<li><p>Rotate the view to confirm the ring geometry, then exit the GUI:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">exit</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ol>
+</section>
+<section id="step-3-modify-the-c-code-to-record-crystal-hits" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-modify-the-c-code-to-record-crystal-hits">Step 3: Modify the C++ Code to Record Crystal Hits</h2>
+<p>B3a already uses Geant4’s primitive scorer system. In <code>DetectorConstruction.cc</code>, a <code>G4MultiFunctionalDetector</code> named <strong><code>crystal</code></strong> is attached to each crystal volume, with a <code>G4PSEnergyDeposit</code> primitive scorer named <strong><code>edep</code></strong>. There is also a similar scorer for the patient phantom (<code>patient/dose</code>).</p>
+<p>What you may not realise is that B3a’s <code>exampleB3a.cc</code> already creates a <code>G4ScoreNtupleWriter</code> and calls <code>SetNtupleMerging(true)</code> on it. <strong>This means the framework will automatically write a per-event ntuple for each primitive scorer</strong> — including event ID, crystal cell ID, and energy deposit — as soon as we hand it an open output file. We don’t have to write our own <code>EndOfEventAction</code> loop, define our own ntuple, or fill any rows ourselves.</p>
+<p>In modern Geant4, B3a’s action classes (<code>RunAction</code>, <code>EventAction</code>, <code>ActionInitialization</code>) live inside <code>namespace B3a</code>, and the shared geometry/physics classes live inside <code>namespace B3</code>. The header and source files do <strong>not</strong> carry a <code>B3a</code> filename prefix. Every code addition you make below will go inside an existing <code>namespace B3a { ... }</code> block.</p>
+<p>So the entire C++ change in this lab is six new lines in <strong>one file</strong>: tell the analysis manager to use CSV, open an output file in <code>BeginOfRunAction</code>, and write/close it in <code>EndOfRunAction</code>. That’s it.</p>
+<section id="modification-runaction.cc" class="level3">
+<h3 class="anchored" data-anchor-id="modification-runaction.cc">Modification: RunAction.cc</h3>
+<ol type="1">
+<li><p>Open <code>src/RunAction.cc</code>:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gedit</span> src/RunAction.cc <span class="kw">&amp;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Add the analysis-manager header at the top, near the other <code>#include</code> lines:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"G4AnalysisManager.hh"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Inside <code>RunAction::BeginOfRunAction(const G4Run*)</code>, add at the top of the function body:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">// --- Lab 4 addition: route the framework's score-ntuple output to CSV</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> analysisManager <span class="op">=</span> G4AnalysisManager<span class="op">::</span>Instance<span class="op">();</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>analysisManager<span class="op">-&gt;</span>SetDefaultFileType<span class="op">(</span><span class="st">"csv"</span><span class="op">);</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>analysisManager<span class="op">-&gt;</span>OpenFile<span class="op">(</span><span class="st">"B3_output"</span><span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Inside <code>RunAction::EndOfRunAction(const G4Run*)</code>, add at the <strong>very end</strong> of the function:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">// --- Lab 4 addition: flush and close the CSV</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> analysisManager <span class="op">=</span> G4AnalysisManager<span class="op">::</span>Instance<span class="op">();</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>analysisManager<span class="op">-&gt;</span>Write<span class="op">();</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>analysisManager<span class="op">-&gt;</span>CloseFile<span class="op">();</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ol>
+<p>That is the only file you need to edit. <code>EventAction.cc</code> is left untouched — the framework’s <code>G4ScoreNtupleWriter</code> fills the ntuples automatically once a file is open.</p>
+</section>
+</section>
+<section id="step-4-compile-run-and-inspect-the-output" class="level2">
+<h2 class="anchored" data-anchor-id="step-4-compile-run-and-inspect-the-output">Step 4: Compile, Run, and Inspect the Output</h2>
+<ol type="1">
+<li><p>Re-compile your modified application:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> build</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> <span class="at">-j</span><span class="va">$(</span><span class="fu">nproc</span><span class="va">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>If you encounter errors, double-check brace placement, semicolons, and that your additions are inside the correct function.</p></li>
+<li><p>Create a macro file <code>lab4.mac</code> in the <code>B3a</code> directory (one level up from <code>build</code>):</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ..</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nano</span> lab4.mac</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Add:</p>
+<pre><code># Lab 4: PET scanner data run
+
+# Force single-threaded mode so we get ONE CSV file, not one per worker.
+# Must come BEFORE /run/initialize. (Same trick as Lab 3.)
+/run/numberOfThreads 1
+
+/run/initialize
+/run/printProgress 5000
+/run/beamOn 50000</code></pre></li>
+<li><p>Run the simulation in batch mode:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> build</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./exampleB3a</span> ../lab4.mac</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This will take a few minutes depending on your hardware.</p></li>
+<li><p>Verify the output:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-lh</span> <span class="pp">*</span>.csv</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span> B3_output_nt_crystal_edep_t0.csv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You will see several CSV files. The framework writes one ntuple per primitive scorer:</p>
+<ul>
+<li><code>B3_output_nt_crystal_edep_t0.csv</code> — <strong>the file we want.</strong> Three columns: <code>crystal_edep_eventId</code>, <code>crystal_edep_cell</code> (the crystal copy number), and <code>crystal_edep_score</code> (the energy deposit in MeV).</li>
+<li><code>B3_output_nt_patient_dose_t0.csv</code> — patient-phantom dose data. We don’t use it in this lab.</li>
+<li>The same names without the <code>_t0</code> suffix are master-thread placeholders containing only headers; you can ignore (or <code>rm</code>) them.</li>
+</ul>
+<p>The first line of <code>B3_output_nt_crystal_edep_t0.csv</code> after the <code>#</code>-prefixed metadata should look like <code>0,1,0.510999</code> — event 0, crystal 1, ~511 keV deposited (the photopeak signal we are about to plot).</p></li>
+</ol>
+</section>
+<section id="step-5-plot-the-energy-spectrum" class="level2">
+<h2 class="anchored" data-anchor-id="step-5-plot-the-energy-spectrum">Step 5: Plot the Energy Spectrum</h2>
+<p>Now we switch to Python for analysis. We will plot the distribution of <code>Edep</code> across all hits and look for the 511 keV photopeak.</p>
+<p>In your <code>B3a/build</code> directory, create <code>analyze_spectrum.py</code>:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nano</span> analyze_spectrum.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Paste the following content (must start at column 0 — no leading whitespace):</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Geant4's CSV begins with metadata lines starting with '#'. We skip those</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># and supply our own column names matching the C++ ntuple definition.</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">'B3_output_nt_crystal_edep_t0.csv'</span>,</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>                   comment<span class="op">=</span><span class="st">'#'</span>, header<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>                   names<span class="op">=</span>[<span class="st">'EventID'</span>, <span class="st">'CrystalID'</span>, <span class="st">'Edep'</span>])</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>data[<span class="st">'Edep_keV'</span>] <span class="op">=</span> data[<span class="st">'Edep'</span>] <span class="op">*</span> <span class="fl">1000.0</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total hits recorded: </span><span class="sc">{</span><span class="bu">len</span>(data)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Unique events with at least one hit: </span><span class="sc">{</span>data[<span class="st">'EventID'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mean Edep:   </span><span class="sc">{</span>data[<span class="st">'Edep_keV'</span>]<span class="sc">.</span>mean()<span class="sc">:.2f}</span><span class="ss"> keV"</span>)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Median Edep: </span><span class="sc">{</span>data[<span class="st">'Edep_keV'</span>]<span class="sc">.</span>median()<span class="sc">:.2f}</span><span class="ss"> keV"</span>)</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">11</span>, <span class="dv">6</span>))</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>plt.hist(data[<span class="st">'Edep_keV'</span>], bins<span class="op">=</span><span class="dv">350</span>, <span class="bu">range</span><span class="op">=</span>(<span class="dv">0</span>, <span class="dv">700</span>),</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>         color<span class="op">=</span><span class="st">'steelblue'</span>, alpha<span class="op">=</span><span class="fl">0.8</span>, edgecolor<span class="op">=</span><span class="st">'black'</span>, linewidth<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>plt.axvline(<span class="dv">511</span>, color<span class="op">=</span><span class="st">'red'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, linewidth<span class="op">=</span><span class="fl">1.5</span>,</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>            label<span class="op">=</span><span class="st">'Expected photopeak: 511 keV'</span>)</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'PET Detector Crystal Energy Spectrum'</span>)</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Energy Deposited per Hit (keV)'</span>)</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Counts'</span>)</span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">'pet_spectrum.png'</span>, dpi<span class="op">=</span><span class="dv">200</span>)</span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Spectrum saved to pet_spectrum.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Run it:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> analyze_spectrum.py</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">eog</span> pet_spectrum.png</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You should see a sharp peak near 511 keV (the photopeak) sitting on top of a broader, lower-energy distribution (the Compton continuum).</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/pet_spectrum.png" class="img-fluid figure-img"></p>
+<figcaption>PET Energy Spectrum</figcaption>
+</figure>
+</div>
+</section>
+<section id="step-6-coincidence-analysis-and-lines-of-response" class="level2">
+<h2 class="anchored" data-anchor-id="step-6-coincidence-analysis-and-lines-of-response">Step 6: Coincidence Analysis and Lines of Response</h2>
+<p>A single 511 keV hit tells us nothing about <em>where</em> the positron decayed. The PET imaging signal comes from <strong>coincidence</strong>: two photopeak hits, in the same event, on opposite sides of the detector ring. The line connecting the two hit crystals — the <strong>line of response (LOR)</strong> — passes through the decay point.</p>
+<p>We did not record (x, y) directly in the C++ code, but we recorded the crystal copy number, which is enough: B3a’s crystals are arranged in a regular ring, so we can compute each crystal’s position from its copy number. The default geometry in <code>DetectorConstruction.cc</code> lays out:</p>
+<ul>
+<li><strong>32 crystals per ring</strong>, evenly spaced around 360°</li>
+<li><strong>9 axial rings</strong> stacked along the scanner’s z-axis</li>
+<li>Crystals are placed at a fixed inner radius (≈ 32 cm; see the constructor for the exact value)</li>
+</ul>
+<p>Copy numbers run sequentially: copy <code>n</code> belongs to ring <code>n // 32</code>, position <code>n % 32</code> within that ring.</p>
+<p>Create <code>analyze_coincidence.py</code> in the <code>build</code> directory:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nano</span> analyze_coincidence.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Paste the following content (must start at column 0 — no leading whitespace):</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co"># --- B3a default geometry constants ---</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co"># If you have changed the detector, update these to match.</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>N_CRYST_PER_RING <span class="op">=</span> <span class="dv">32</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>N_RINGS <span class="op">=</span> <span class="dv">9</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>RING_RADIUS_MM <span class="op">=</span> <span class="fl">320.0</span>   <span class="co"># approximate; verify in DetectorConstruction.cc</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>AXIAL_PITCH_MM <span class="op">=</span> <span class="fl">30.0</span>    <span class="co"># approximate ring-to-ring spacing</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> crystal_position(crystal_id):</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Map a B3a crystal copy number to its approximate (x, y, z) center, in mm."""</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>    ring_idx <span class="op">=</span> crystal_id <span class="op">//</span> N_CRYST_PER_RING</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>    in_ring <span class="op">=</span> crystal_id <span class="op">%</span> N_CRYST_PER_RING</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>    theta <span class="op">=</span> (in_ring <span class="op">+</span> <span class="fl">0.5</span>) <span class="op">*</span> <span class="fl">2.0</span> <span class="op">*</span> np.pi <span class="op">/</span> N_CRYST_PER_RING</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> RING_RADIUS_MM <span class="op">*</span> np.cos(theta)</span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> RING_RADIUS_MM <span class="op">*</span> np.sin(theta)</span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>    z <span class="op">=</span> (ring_idx <span class="op">-</span> (N_RINGS <span class="op">-</span> <span class="dv">1</span>) <span class="op">/</span> <span class="fl">2.0</span>) <span class="op">*</span> AXIAL_PITCH_MM</span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x, y, z</span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Load data and add positions ---</span></span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">'B3_output_nt_crystal_edep_t0.csv'</span>,</span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>                   comment<span class="op">=</span><span class="st">'#'</span>, header<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>                   names<span class="op">=</span>[<span class="st">'EventID'</span>, <span class="st">'CrystalID'</span>, <span class="st">'Edep'</span>])</span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>data[<span class="st">'Edep_keV'</span>] <span class="op">=</span> data[<span class="st">'Edep'</span>] <span class="op">*</span> <span class="fl">1000.0</span></span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>xyz <span class="op">=</span> data[<span class="st">'CrystalID'</span>].<span class="bu">apply</span>(crystal_position)</span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>data[<span class="st">'X'</span>] <span class="op">=</span> xyz.<span class="bu">apply</span>(<span class="kw">lambda</span> t: t[<span class="dv">0</span>])</span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a>data[<span class="st">'Y'</span>] <span class="op">=</span> xyz.<span class="bu">apply</span>(<span class="kw">lambda</span> t: t[<span class="dv">1</span>])</span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>data[<span class="st">'Z'</span>] <span class="op">=</span> xyz.<span class="bu">apply</span>(<span class="kw">lambda</span> t: t[<span class="dv">2</span>])</span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Hit-position scatter (top view) ---</span></span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a>plt.scatter(data[<span class="st">'X'</span>], data[<span class="st">'Y'</span>], s<span class="op">=</span><span class="dv">2</span>, alpha<span class="op">=</span><span class="fl">0.1</span>)</span>
+<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Crystal Hit Positions (Top View)'</span>)</span>
+<span id="cb20-38"><a href="#cb20-38" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'X (mm)'</span>)</span>
+<span id="cb20-39"><a href="#cb20-39" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Y (mm)'</span>)</span>
+<span id="cb20-40"><a href="#cb20-40" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">'equal'</span>)</span>
+<span id="cb20-41"><a href="#cb20-41" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb20-42"><a href="#cb20-42" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb20-43"><a href="#cb20-43" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">'hit_positions.png'</span>, dpi<span class="op">=</span><span class="dv">200</span>)</span>
+<span id="cb20-44"><a href="#cb20-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-45"><a href="#cb20-45" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Filter for photopeak hits ---</span></span>
+<span id="cb20-46"><a href="#cb20-46" aria-hidden="true" tabindex="-1"></a>PHOTOPEAK_LOW <span class="op">=</span> <span class="dv">450</span>   <span class="co"># keV</span></span>
+<span id="cb20-47"><a href="#cb20-47" aria-hidden="true" tabindex="-1"></a>PHOTOPEAK_HIGH <span class="op">=</span> <span class="dv">550</span>  <span class="co"># keV</span></span>
+<span id="cb20-48"><a href="#cb20-48" aria-hidden="true" tabindex="-1"></a>photopeak <span class="op">=</span> data[(data[<span class="st">'Edep_keV'</span>] <span class="op">&gt;=</span> PHOTOPEAK_LOW) <span class="op">&amp;</span></span>
+<span id="cb20-49"><a href="#cb20-49" aria-hidden="true" tabindex="-1"></a>                 (data[<span class="st">'Edep_keV'</span>] <span class="op">&lt;=</span> PHOTOPEAK_HIGH)]</span>
+<span id="cb20-50"><a href="#cb20-50" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Hits in photopeak window [</span><span class="sc">{</span>PHOTOPEAK_LOW<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span>PHOTOPEAK_HIGH<span class="sc">}</span><span class="ss">] keV: "</span></span>
+<span id="cb20-51"><a href="#cb20-51" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span><span class="bu">len</span>(photopeak)<span class="sc">}</span><span class="ss"> (</span><span class="sc">{</span><span class="dv">100</span><span class="op">*</span><span class="bu">len</span>(photopeak)<span class="op">/</span><span class="bu">len</span>(data)<span class="sc">:.1f}</span><span class="ss">% of all hits)"</span>)</span>
+<span id="cb20-52"><a href="#cb20-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-53"><a href="#cb20-53" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Find true coincidences: events with exactly 2 photopeak hits ---</span></span>
+<span id="cb20-54"><a href="#cb20-54" aria-hidden="true" tabindex="-1"></a>counts_per_event <span class="op">=</span> photopeak.groupby(<span class="st">'EventID'</span>).size()</span>
+<span id="cb20-55"><a href="#cb20-55" aria-hidden="true" tabindex="-1"></a>coincidence_events <span class="op">=</span> counts_per_event[counts_per_event <span class="op">==</span> <span class="dv">2</span>].index</span>
+<span id="cb20-56"><a href="#cb20-56" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total events processed: </span><span class="sc">{</span>data[<span class="st">'EventID'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb20-57"><a href="#cb20-57" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"True coincidences found: </span><span class="sc">{</span><span class="bu">len</span>(coincidence_events)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb20-58"><a href="#cb20-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-59"><a href="#cb20-59" aria-hidden="true" tabindex="-1"></a>coincident_hits <span class="op">=</span> photopeak[photopeak[<span class="st">'EventID'</span>].isin(coincidence_events)]</span>
+<span id="cb20-60"><a href="#cb20-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-61"><a href="#cb20-61" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Draw lines of response ---</span></span>
+<span id="cb20-62"><a href="#cb20-62" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">8</span>))</span>
+<span id="cb20-63"><a href="#cb20-63" aria-hidden="true" tabindex="-1"></a>plt.scatter(data[<span class="st">'X'</span>], data[<span class="st">'Y'</span>], c<span class="op">=</span><span class="st">'lightgray'</span>, s<span class="op">=</span><span class="dv">1</span>, alpha<span class="op">=</span><span class="fl">0.1</span>,</span>
+<span id="cb20-64"><a href="#cb20-64" aria-hidden="true" tabindex="-1"></a>            label<span class="op">=</span><span class="st">'all hits'</span>)</span>
+<span id="cb20-65"><a href="#cb20-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-66"><a href="#cb20-66" aria-hidden="true" tabindex="-1"></a>plotted <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb20-67"><a href="#cb20-67" aria-hidden="true" tabindex="-1"></a>max_lines <span class="op">=</span> <span class="dv">200</span></span>
+<span id="cb20-68"><a href="#cb20-68" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> event_id <span class="kw">in</span> coincidence_events:</span>
+<span id="cb20-69"><a href="#cb20-69" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> plotted <span class="op">&gt;=</span> max_lines:</span>
+<span id="cb20-70"><a href="#cb20-70" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb20-71"><a href="#cb20-71" aria-hidden="true" tabindex="-1"></a>    pair <span class="op">=</span> coincident_hits[coincident_hits[<span class="st">'EventID'</span>] <span class="op">==</span> event_id]</span>
+<span id="cb20-72"><a href="#cb20-72" aria-hidden="true" tabindex="-1"></a>    plt.plot(pair[<span class="st">'X'</span>].values, pair[<span class="st">'Y'</span>].values,</span>
+<span id="cb20-73"><a href="#cb20-73" aria-hidden="true" tabindex="-1"></a>             <span class="st">'r-'</span>, alpha<span class="op">=</span><span class="fl">0.3</span>, linewidth<span class="op">=</span><span class="fl">0.6</span>)</span>
+<span id="cb20-74"><a href="#cb20-74" aria-hidden="true" tabindex="-1"></a>    plotted <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb20-75"><a href="#cb20-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-76"><a href="#cb20-76" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="ss">f'Lines of Response (first </span><span class="sc">{</span>plotted<span class="sc">}</span><span class="ss"> coincidences)'</span>)</span>
+<span id="cb20-77"><a href="#cb20-77" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'X (mm)'</span>)</span>
+<span id="cb20-78"><a href="#cb20-78" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Y (mm)'</span>)</span>
+<span id="cb20-79"><a href="#cb20-79" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">'equal'</span>)</span>
+<span id="cb20-80"><a href="#cb20-80" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb20-81"><a href="#cb20-81" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb20-82"><a href="#cb20-82" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">'lines_of_response.png'</span>, dpi<span class="op">=</span><span class="dv">200</span>)</span>
+<span id="cb20-83"><a href="#cb20-83" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"LOR figure saved to lines_of_response.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Run it:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> analyze_coincidence.py</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="ex">eog</span> lines_of_response.png</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You should see a dense cluster of red lines crossing near the center of the ring — that intersection region marks the location of the simulated source.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/lor.png" class="img-fluid figure-img"></p>
+<figcaption>Lines of Response</figcaption>
+</figure>
+</div>
+</section>
+<section id="analysis-questions" class="level2">
+<h2 class="anchored" data-anchor-id="analysis-questions">Analysis Questions</h2>
+<section id="energy-spectrum" class="level3">
+<h3 class="anchored" data-anchor-id="energy-spectrum">Energy Spectrum</h3>
+<ol type="1">
+<li>Open <code>pet_spectrum.png</code>. At what energy is the main peak centered? How close is this to the theoretical 511 keV?</li>
+<li>Why is the photopeak so much taller than the rest of the spectrum?</li>
+<li>The broad, lower-energy distribution is the <strong>Compton continuum</strong> — gamma rays that scattered inside a crystal and escaped, depositing only part of their energy. Why is it important for a PET scanner to distinguish photopeak hits from Compton-continuum hits?</li>
+</ol>
+</section>
+<section id="coincidence-logic" class="level3">
+<h3 class="anchored" data-anchor-id="coincidence-logic">Coincidence Logic</h3>
+<ol start="4" type="1">
+<li>We defined a true coincidence as “exactly two hits in the photopeak window in the same event.” What might cause an event to have <em>three</em> photopeak hits? What about <em>one</em>?</li>
+<li>We used a tight window of 450–550 keV. What would happen to the fraction of accepted events — and to the spatial accuracy of the LORs — if we widened the window to 200–700 keV? (Hint: think about Compton-scattered photons from one crystal landing in another.)</li>
+</ol>
+</section>
+<section id="lines-of-response" class="level3">
+<h3 class="anchored" data-anchor-id="lines-of-response">Lines of Response</h3>
+<ol start="6" type="1">
+<li>Look at <code>lines_of_response.png</code>. Do the lines all cross at a single point, or is there a spread? What physical effects limit the spatial resolution of a real PET scanner? (Consider: positron range before annihilation, non-collinearity of the two photons, finite crystal size.)</li>
+<li>Where in the image is the densest crossing region? What does this tell you about where the simulated source is located?</li>
+</ol>
+</section>
+<section id="workflow" class="level3">
+<h3 class="anchored" data-anchor-id="workflow">Workflow</h3>
+<ol start="8" type="1">
+<li>We used the existing primitive scorer rather than writing a custom sensitive detector. What did this save us, and what did we give up (e.g., what information about the hit was <em>not</em> available)?</li>
+<li>How would you extend the simulation to image two separate point sources in the phantom? What changes in the C++? What changes in the Python?</li>
+</ol>
+</section>
+</section>
+<section id="troubleshooting" class="level2">
+<h2 class="anchored" data-anchor-id="troubleshooting">Troubleshooting</h2>
+<ul>
+<li><strong>Compilation errors mentioning <code>G4AnalysisManager</code></strong>: make sure you added <code>#include "G4AnalysisManager.hh"</code> to <code>RunAction.cc</code>.</li>
+<li><strong>CSV file not found in Python</strong>: confirm the filename in <code>pd.read_csv(...)</code> matches what <code>ls *.csv</code> shows in your <code>build</code> directory.</li>
+<li><strong>No photopeak in the spectrum</strong>: check that you ran enough events (50,000 is a reasonable minimum) and that you are reading the file in keV. Also check the histogram range and binning.</li>
+<li><strong>Many <code>B3_output_nt_crystal_edep_tN.csv</code> files instead of one <code>_t0.csv</code></strong>: Geant4 ran multi-threaded. Add <code>/run/numberOfThreads 1</code> to your macro <strong>before</strong> <code>/run/initialize</code>, delete the per-thread files (<code>rm B3_output_nt_*_t*.csv</code>), and re-run.</li>
+<li><strong>Empty LOR figure</strong>: tighten or relax the photopeak window. With very few simulated events, you may need to lower the lower bound (e.g., 400 keV) to find any coincidences.</li>
+</ul>
+</section>
+<section id="verification-checklist" class="level2">
+<h2 class="anchored" data-anchor-id="verification-checklist">Verification Checklist</h2>
+<p>Before completing this lab, verify you can:</p>
+<ul class="task-list">
+<li><label><input type="checkbox">Compile and run the unmodified B3a example</label></li>
+<li><label><input type="checkbox">Identify the existing <code>crystal/edep</code> hits collection in the source code</label></li>
+<li><label><input type="checkbox">Modify <code>RunAction.cc</code> to route the framework’s score ntuples to CSV</label></li>
+<li><label><input type="checkbox">Generate <code>B3_output_nt_crystal_edep_t0.csv</code> from a 50,000-event run</label></li>
+<li><label><input type="checkbox">Plot the crystal energy spectrum and identify the 511 keV photopeak</label></li>
+<li><label><input type="checkbox">Map crystal copy numbers to (x, y) positions</label></li>
+<li><label><input type="checkbox">Find true-coincidence events and draw their lines of response</label></li>
+</ul>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>In this lab you simulated a complete PET scanner system. You navigated B3a’s existing primitive-scorer infrastructure, added per-hit data output, and used Python to extract two pieces of physics from the same dataset: the <strong>511 keV photopeak</strong> in the energy spectrum, and the <strong>lines of response</strong> that connect coincident annihilation photons. Together these are the building blocks of PET image reconstruction — combining particle physics (annihilation), detector hardware (scintillators), and software (coincidence logic) to see inside the body.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<ul>
+<li>Geant4 Collaboration. (n.d.). <em>README for examples/basic/B3</em>. GitLab.</li>
+<li>Geant4 Collaboration. (n.d.). <em>Geant4 Application Developer’s Guide — Hits and Sensitive Detectors</em>.</li>
+<li>Cherry, S. R., Sorenson, J. A., &amp; Phelps, M. E. (2012). <em>Physics in Nuclear Medicine</em> (4th ed.). Elsevier Health Sciences.</li>
+</ul>
+</section>
+<section id="optional-extensions" class="level2">
+<h2 class="anchored" data-anchor-id="optional-extensions">Optional Extensions</h2>
+<ol type="1">
+<li><strong>Energy resolution.</strong> Real scintillators broaden the photopeak. Add Gaussian smearing of <code>Edep</code> in your Python analysis (e.g., 10% FWHM at 511 keV) and re-run the spectrum and coincidence steps.</li>
+<li><strong>3-D LORs.</strong> Use the <code>Z</code> column from <code>crystal_position</code> to draw lines of response in 3-D with <code>mpl_toolkits.mplot3d</code>.</li>
+<li><strong>Two sources.</strong> Modify the primary generator to alternate between two source positions, then check whether your LOR plot shows two overlapping clusters of crossings.</li>
+<li><strong>Custom sensitive detector.</strong> Replace the primitive scorer with a custom <code>G4VSensitiveDetector</code> and a <code>CrystalHit</code> class (in <code>namespace B3a</code>) that records position and time directly in C++. Compare the results to the copy-number-based approach used here.</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/jwinterm\.github\.io\/geant4-radiation-labs\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../lab3_modifyB1/lab3.html" class="pagination-link" aria-label="Lab 3: Acquiring and Analyzing Simulation Data">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Lab 3: Acquiring and Analyzing Simulation Data</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

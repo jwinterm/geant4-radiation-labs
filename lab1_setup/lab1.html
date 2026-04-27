@@ -7,8 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="John Murphy and Steven Carlson">
+<meta name="dcterms.date" content="2025-11-11">
 
-<title>Geant4 Radiation Labs</title>
+<title>Lab 1: Setting Up Linux and Building Geant4 – Geant4 Radiation Labs</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -58,23 +59,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./lab1_setup/lab1.html" rel="next">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-48ffa3e5b9d089919c6712c39e5b00f2.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-c85aa45615bc724621e561d3dca1e930.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../lab2_exampleB1/lab2.html" rel="next">
+<link href="../index.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-48ffa3e5b9d089919c6712c39e5b00f2.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-c85aa45615bc724621e561d3dca1e930.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -113,7 +115,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Geant4 Radiation Labs</span>
     </a>
   </div>
@@ -124,23 +126,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./lab1_setup/lab1.html"> 
+    <a class="nav-link" href="../lab1_setup/lab1.html"> 
 <span class="menu-text">Lab 1: Setup</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./lab2_exampleB1/lab2.html"> 
+    <a class="nav-link" href="../lab2_exampleB1/lab2.html"> 
 <span class="menu-text">Lab 2: B1</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./lab3_modifyB1/lab3.html"> 
+    <a class="nav-link" href="../lab3_modifyB1/lab3.html"> 
 <span class="menu-text">Lab 3: Modify B1</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./lab4_exampleB3/lab4.html"> 
+    <a class="nav-link" href="../lab4_exampleB3/lab4.html"> 
 <span class="menu-text">Lab 4: PET (B3a)</span></a>
   </li>  
 </ul>
@@ -161,7 +163,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Introduction</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../lab1_setup/lab1.html">Labs</a></li><li class="breadcrumb-item"><a href="../lab1_setup/lab1.html">Lab 1: Setting Up Linux and Building Geant4</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -183,7 +185,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Introduction</span></a>
   </div>
 </li>
@@ -198,25 +200,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./lab1_setup/lab1.html" class="sidebar-item-text sidebar-link">
+  <a href="../lab1_setup/lab1.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Lab 1: Setting Up Linux and Building Geant4</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./lab2_exampleB1/lab2.html" class="sidebar-item-text sidebar-link">
+  <a href="../lab2_exampleB1/lab2.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Lab 2: First Simulation - Building and Running Geant4 Example B1</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./lab3_modifyB1/lab3.html" class="sidebar-item-text sidebar-link">
+  <a href="../lab3_modifyB1/lab3.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Lab 3: Acquiring and Analyzing Simulation Data</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./lab4_exampleB3/lab4.html" class="sidebar-item-text sidebar-link">
+  <a href="../lab4_exampleB3/lab4.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Lab 4: Medical Physics Application - A PET Scanner</span></a>
   </div>
 </li>
@@ -232,22 +234,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#what-this-is" id="toc-what-this-is" class="nav-link active" data-scroll-target="#what-this-is">What this is</a></li>
-  <li><a href="#audience" id="toc-audience" class="nav-link" data-scroll-target="#audience">Audience</a></li>
-  <li><a href="#the-labs" id="toc-the-labs" class="nav-link" data-scroll-target="#the-labs">The labs</a></li>
-  <li><a href="#what-youll-build" id="toc-what-youll-build" class="nav-link" data-scroll-target="#what-youll-build">What you’ll build</a></li>
-  <li><a href="#source-and-pdfs" id="toc-source-and-pdfs" class="nav-link" data-scroll-target="#source-and-pdfs">Source and PDFs</a></li>
-  <li><a href="#citing" id="toc-citing" class="nav-link" data-scroll-target="#citing">Citing</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link" data-scroll-target="#prerequisites">Prerequisites</a></li>
+  <li><a href="#pre-lab-questions" id="toc-pre-lab-questions" class="nav-link" data-scroll-target="#pre-lab-questions">Pre-Lab Questions</a></li>
+  <li><a href="#step-1-setting-up-the-virtual-machine" id="toc-step-1-setting-up-the-virtual-machine" class="nav-link" data-scroll-target="#step-1-setting-up-the-virtual-machine">Step 1: Setting Up the Virtual Machine</a></li>
+  <li><a href="#step-2-enable-shared-clipboard-and-fullscreen-optional" id="toc-step-2-enable-shared-clipboard-and-fullscreen-optional" class="nav-link" data-scroll-target="#step-2-enable-shared-clipboard-and-fullscreen-optional">Step 2: Enable Shared Clipboard and Fullscreen (Optional)</a></li>
+  <li><a href="#step-3-install-required-packages" id="toc-step-3-install-required-packages" class="nav-link" data-scroll-target="#step-3-install-required-packages">Step 3: Install Required Packages</a></li>
+  <li><a href="#step-4-building-geant4-with-qt-and-data" id="toc-step-4-building-geant4-with-qt-and-data" class="nav-link" data-scroll-target="#step-4-building-geant4-with-qt-and-data">Step 4: Building Geant4 with Qt and Data</a></li>
+  <li><a href="#step-5-post-installation-setup" id="toc-step-5-post-installation-setup" class="nav-link" data-scroll-target="#step-5-post-installation-setup">Step 5: Post-Installation Setup</a>
+  <ul class="collapse">
+  <li><a href="#verification-and-analysis" id="toc-verification-and-analysis" class="nav-link" data-scroll-target="#verification-and-analysis">Verification and Analysis</a></li>
+  <li><a href="#troubleshooting" id="toc-troubleshooting" class="nav-link" data-scroll-target="#troubleshooting">Troubleshooting</a></li>
+  <li><a href="#verification-checklist" id="toc-verification-checklist" class="nav-link" data-scroll-target="#verification-checklist">Verification Checklist</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../lab1_setup/lab1.html">Labs</a></li><li class="breadcrumb-item"><a href="../lab1_setup/lab1.html">Lab 1: Setting Up Linux and Building Geant4</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Geant4 Radiation Labs</h1>
-<p class="subtitle lead">A hands-on intro to Monte Carlo radiation simulation and analysis</p>
+<h1 class="title">Lab 1: Setting Up Linux and Building Geant4</h1>
 </div>
 
 
@@ -261,6 +271,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           </div>
   </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">November 11, 2025</p>
+    </div>
+  </div>
   
     
   </div>
@@ -270,54 +286,182 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="what-this-is" class="level2">
-<h2 class="anchored" data-anchor-id="what-this-is">What this is</h2>
-<p>A four-lab series that takes you from a fresh Linux install to a working PET-scanner simulation, using <a href="https://geant4.web.cern.ch/">Geant4</a> for the physics and Python (pandas, matplotlib) for analysis.</p>
-<p>The labs are designed to be done in order. Each one builds on the environment, code, and analysis idioms of the previous one.</p>
-</section>
-<section id="audience" class="level2">
-<h2 class="anchored" data-anchor-id="audience">Audience</h2>
-<p>Upper-level undergraduates or early graduate students with:</p>
+<section id="learning-objectives" class="level1">
+<h1>Learning Objectives</h1>
+<p>In this lab, you will set up the development environment that the rest of the course depends on. By the end of this session, you will be able to:</p>
 <ul>
-<li>Comfort with the Linux command line</li>
-<li>Some C++ literacy (you don’t need to write much; you’ll mostly read and patch)</li>
-<li>Some Python literacy (you’ll write short analysis scripts)</li>
+<li>Install Ubuntu Linux in a virtual machine and configure it for productive use</li>
+<li>Install the system libraries required to build Geant4 with Qt visualization support</li>
+<li>Compile Geant4 from source using CMake</li>
+<li>Configure shell environment variables so applications can locate the Geant4 installation</li>
+<li>Verify the installation by inspecting the directory layout and environment</li>
 </ul>
-<p>No prior Geant4 or medical-physics knowledge is assumed.</p>
 </section>
-<section id="the-labs" class="level2">
-<h2 class="anchored" data-anchor-id="the-labs">The labs</h2>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>In this lab, you will install a Linux operating system in a virtual machine and build Geant4 from source with Qt (visualization) support. Geant4 is a toolkit for simulating ionizing particle interactions with matter — the foundation we will use throughout the rest of the lab series to model detectors, beams, and medical imaging systems.</p>
+</section>
+<section id="prerequisites" class="level1">
+<h1>Prerequisites</h1>
+<ul>
+<li>Computer with virtualization support enabled in BIOS/UEFI</li>
+<li>VirtualBox or VMware</li>
+<li><a href="https://releases.ubuntu.com/noble/">Ubuntu 24 ISO Image</a></li>
+<li>Internet connection</li>
+<li>At least 50 GB of free disk space and 8 GB of RAM available to the VM</li>
+</ul>
+</section>
+<section id="pre-lab-questions" class="level1">
+<h1>Pre-Lab Questions</h1>
 <ol type="1">
-<li><p><strong><a href="./lab1_setup/lab1.html">Lab 1 — Setting Up Linux and Building Geant4</a></strong> Install Ubuntu in a virtual machine and build Geant4 from source with Qt visualisation support.</p></li>
-<li><p><strong><a href="./lab2_exampleB1/lab2.html">Lab 2 — First Simulation: Building and Running B1</a></strong> Compile Geant4’s B1 example, run it interactively (Qt GUI) and in batch mode via macros, and modify the particle, energy, and event count.</p></li>
-<li><p><strong><a href="./lab3_modifyB1/lab3.html">Lab 3 — Acquiring and Analysing Simulation Data</a></strong> Patch B1’s C++ to write per-event energy data to CSV via <code>G4AnalysisManager</code>, then load it in Python with pandas and produce histograms, statistics, and per-particle comparisons.</p></li>
-<li><p><strong><a href="./lab4_exampleB3/lab4.html">Lab 4 — A PET Scanner</a></strong> Apply the same workflow to Geant4’s B3a (Positron Emission Tomography) example. Identify the 511 keV photopeak in the energy spectrum, find true coincidences, and reconstruct lines of response.</p></li>
+<li>What is a virtual machine, and why are we using one for this course rather than installing Linux on the host machine directly?</li>
+<li>What is the difference between a <em>source</em> distribution of a software package and a <em>binary</em> (pre-compiled) distribution?</li>
+<li>What does CMake do? Why do we configure a build with CMake before running <code>make</code>?</li>
+<li>What is an environment variable, and why does Geant4 ship a script (<code>geant4.sh</code>) for setting them?</li>
 </ol>
 </section>
-<section id="what-youll-build" class="level2">
-<h2 class="anchored" data-anchor-id="what-youll-build">What you’ll build</h2>
-<p>By the end of the series you will have:</p>
+<section id="step-1-setting-up-the-virtual-machine" class="level1">
+<h1>Step 1: Setting Up the Virtual Machine</h1>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/vbox.jpg" class="img-fluid figure-img"></p>
+<figcaption>VirtualBox New VM</figcaption>
+</figure>
+</div>
+<ol type="1">
+<li>Open VirtualBox or VMware.</li>
+<li>Click “New” to create a virtual machine.</li>
+<li>Name your virtual machine and select Linux type/version (Ubuntu).
 <ul>
-<li>A reproducible Geant4 + Python development environment</li>
-<li>Modified Geant4 applications that emit clean CSV data</li>
-<li>Python scripts that compute statistics and produce publication-style plots</li>
-<li>A working understanding of the <strong>simulate → save → analyse → visualise</strong> loop that underlies most computational physics</li>
+<li>Do not use the default VM location (create a new accessible folder instead).</li>
+</ul></li>
+<li>Copy the ISO file into your chosen accessible folder (e.g., Downloads).</li>
+<li>Select the ISO image file when prompted by VirtualBox.</li>
+<li>Allocate memory (RAM): at least 8 GB.</li>
+<li>Allocate CPU cores (maximum 60% of available cores). Check core count in Windows via <code>Settings &gt; About Your PC</code>.</li>
+<li>Create a virtual hard disk (at least 50 GB recommended).</li>
+<li>Start the virtual machine and boot from the ISO.</li>
+<li>Select “Try or Install Ubuntu” to launch the live session. This boots Ubuntu into a live session, allowing you to test it without affecting the virtual disk.</li>
+<li>From the Linux desktop, click “Install Ubuntu” and follow installation prompts to create a permanent installation.</li>
+<li>After installation, remove the ISO:</li>
+</ol>
+<ul>
+<li>Go to the top menu bar and select <code>Devices &gt; Optical Drives &gt; Remove disk</code>. (Note: if its greyed out, then it has already been removed automatically).</li>
+<li>Restart the virtual machine.</li>
+</ul>
+<ol start="13" type="1">
+<li>Log in to your new Ubuntu installation and switch to X11 session at the login screen (click the gear icon).</li>
+</ol>
+</section>
+<section id="step-2-enable-shared-clipboard-and-fullscreen-optional" class="level1">
+<h1>Step 2: Enable Shared Clipboard and Fullscreen (Optional)</h1>
+<ol type="1">
+<li><p>Open Terminal in Linux (<code>Ctrl+Alt+T</code>). Update and install essential packages:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt update <span class="kw">&amp;&amp;</span> <span class="fu">sudo</span> apt install <span class="at">-y</span> build-essential <span class="dt">\</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  dkms linux-headers-<span class="va">$(</span><span class="fu">uname</span> <span class="at">-r</span><span class="va">)</span> bzip2 tar</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Insert Guest Additions CD via <code>Devices &gt; Insert Guest Additions CD image</code></p>
+<p>Mount the CD with the following command:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mount /dev/cdrom /mnt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Navigate to that folder with cd (change directory):</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /mnt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Run:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ./VBoxLinuxAdditions.run</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Enable fullscreen with <code>Right Ctrl + F</code>.</p></li>
+<li><p>Enable Shared Clipboard which allows you to paste commands into the terminal:</p>
+<ul>
+<li>In VirtualBox, go to <code>Settings &gt; Advanced</code> and set Shared Clipboard to “Bidirectional”.</li>
+<li>Restart the VM.</li>
+</ul></li>
+</ol>
+</section>
+<section id="step-3-install-required-packages" class="level1">
+<h1>Step 3: Install Required Packages</h1>
+<p>Run the following to install the libraries needed to build Geant4 with Qt support:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt-get install build-essential libexpat1-dev <span class="dt">\</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  libxmu-dev cmake cmake-curses-gui qtbase5-dev qt5-qmake</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="step-4-building-geant4-with-qt-and-data" class="level1">
+<h1>Step 4: Building Geant4 with Qt and Data</h1>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/g4logo.png" class="img-fluid figure-img"></p>
+<figcaption>Geant4</figcaption>
+</figure>
+</div>
+<ol type="1">
+<li><p>Download Geant4 source code (tar.gz) from https://geant4.web.cern.ch/download/11.3.2.html.</p></li>
+<li><p>Extract and move the folder (<code>geant4-v11.3.2</code>) to your home directory.</p></li>
+<li><p>Create a build folder:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> ~/geant4build</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/geant4build</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Configure Geant4 with CMake:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cmake</span> <span class="dt">\</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-DCMAKE_INSTALL_PREFIX</span><span class="op">=</span>/usr/local <span class="dt">\</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-DGEANT4_INSTALL_DATA</span><span class="op">=</span>ON <span class="dt">\</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">-DGEANT4_INSTALL_DATADIR</span><span class="op">=</span>/usr/local/share/Geant4/data <span class="dt">\</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">-DGEANT4_USE_QT</span><span class="op">=</span>ON <span class="dt">\</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  ~/geant4-v11.3.2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Compile using all available processors:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> <span class="at">-j</span><span class="va">$(</span><span class="fu">nproc</span><span class="va">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Install Geant4:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> make install</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ol>
+</section>
+<section id="step-5-post-installation-setup" class="level1">
+<h1>Step 5: Post-Installation Setup</h1>
+<ol type="1">
+<li><p>Configure library paths:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"/usr/local/lib"</span> <span class="kw">|</span> <span class="fu">sudo</span> tee <span class="dt">\</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  /etc/ld.so.conf.d/geant4.conf</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ldconfig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Set environment variables for Geant4. The Geant4 installer ships a shell script that exports <code>G4INSTALL</code>, <code>G4LEDATA</code>, and the other variables Geant4 applications need at runtime:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /usr/local/bin/geant4.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You will need to source this script in every new terminal where you build or run Geant4 code. (You can add <code>source /usr/local/bin/geant4.sh</code> to your <code>~/.bashrc</code> to make it automatic.)</p></li>
+</ol>
+<section id="verification-and-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="verification-and-analysis">Verification and Analysis</h2>
+<ol type="1">
+<li><p>Verify that the environment is set correctly. In the same terminal where you sourced <code>geant4.sh</code>, run:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">env</span> <span class="kw">|</span> <span class="fu">grep</span> G4</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You should see several lines of output that start with <code>G4...</code> — for example <code>G4INSTALL=/usr/local</code>, <code>G4LEDATAPATH=...</code>, and so on. This confirms the environment variables were exported.</p>
+<p>If <code>G4INSTALL</code> is unset, the <code>source</code> step did not run successfully; re-run it before continuing.</p></li>
+<li><p>Navigate to your installation directory and explore the structure:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /usr/local</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-R</span> <span class="kw">|</span> <span class="fu">less</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Can you find:</p>
+<ul>
+<li>The <code>lib</code> directory containing the libraries?</li>
+<li>The <code>include</code> directory with header files?</li>
+<li>The <code>share</code> directory with examples and data files?</li>
+</ul></li>
+</ol>
+</section>
+<section id="troubleshooting" class="level2">
+<h2 class="anchored" data-anchor-id="troubleshooting">Troubleshooting</h2>
+<ul>
+<li>If CMake fails, check that all required packages are installed</li>
+<li>If compilation fails with memory errors, reduce the number of parallel jobs (e.g., <code>make -j2</code> instead of <code>make -j$(nproc)</code>)</li>
+<li>If environment variables are not set, ensure you have sourced <code>geant4.sh</code> in your current terminal</li>
 </ul>
 </section>
-<section id="source-and-pdfs" class="level2">
-<h2 class="anchored" data-anchor-id="source-and-pdfs">Source and PDFs</h2>
-<p>The full lab source — <code>.qmd</code> files, screenshots, and the Python scripts that generate the conceptual diagrams — lives at <a href="https://github.com/jwinterm/geant4-radiation-labs" class="uri">https://github.com/jwinterm/geant4-radiation-labs</a>.</p>
-<p>PDFs of any lab can be regenerated locally with Quarto:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render lab1_setup/lab1.qmd <span class="at">--to</span> pdf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="verification-checklist" class="level2">
+<h2 class="anchored" data-anchor-id="verification-checklist">Verification Checklist</h2>
+<p>Before completing this lab, verify you can:</p>
+<ul class="task-list">
+<li><label><input type="checkbox">Boot a working Ubuntu virtual machine with shared clipboard and fullscreen support</label></li>
+<li><label><input type="checkbox">Install build dependencies and Qt5 development packages from <code>apt</code></label></li>
+<li><label><input type="checkbox">Run CMake to configure the Geant4 build with Qt and data downloads enabled</label></li>
+<li><label><input type="checkbox">Compile and install Geant4 with <code>make</code> and <code>sudo make install</code></label></li>
+<li><label><input type="checkbox">Source <code>geant4.sh</code> and confirm <code>G4INSTALL</code> and related variables are set</label></li>
+<li><label><input type="checkbox">Locate the Geant4 examples directory under <code>/usr/local/share</code></label></li>
+</ul>
 </section>
-<section id="citing" class="level2">
-<h2 class="anchored" data-anchor-id="citing">Citing</h2>
-<p>If this series is useful in your teaching or work, please cite as:</p>
-<blockquote class="blockquote">
-<p>Murphy, J. and Carlson, S. (2025). <em>Geant4 Radiation Labs.</em> <a href="https://jwinterm.github.io/geant4-radiation-labs/" class="uri">https://jwinterm.github.io/geant4-radiation-labs/</a></p>
-</blockquote>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>You have successfully set up a Linux virtual machine and compiled Geant4 from source with Qt visualization support. In Lab 2 you will use this environment to build and run your first particle-physics simulation.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -745,10 +889,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
+      <a href="../index.html" class="pagination-link" aria-label="Introduction">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Introduction</span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./lab1_setup/lab1.html" class="pagination-link" aria-label="Lab 1: Setting Up Linux and Building Geant4">
-        <span class="nav-page-text">Lab 1: Setting Up Linux and Building Geant4</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../lab2_exampleB1/lab2.html" class="pagination-link" aria-label="Lab 2: First Simulation - Building and Running Geant4 Example B1">
+        <span class="nav-page-text">Lab 2: First Simulation - Building and Running Geant4 Example B1</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
