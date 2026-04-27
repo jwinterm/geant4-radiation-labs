@@ -43,6 +43,10 @@ By the end of the series you will have:
 - Python scripts that compute statistics and produce publication-style plots
 - A working understanding of the **simulate → save → analyse → visualise** loop that underlies most computational physics
 
+## Acknowledgements
+
+With support from Kayla Ross and Veronica Dougherty.
+
 ## Source and PDFs
 
 The full lab source — `.qmd` files, screenshots, and the Python scripts that generate the conceptual diagrams — lives at <https://github.com/jwinterm/geant4-radiation-labs>.
