@@ -469,7 +469,7 @@
     "href": "index.html#the-labs",
     "title": "Geant4 Radiation Labs",
     "section": "The labs",
-    "text": "The labs\n\nLab 1 — Setting Up Linux and Building Geant4 Install Ubuntu in a virtual machine and build Geant4 from source with Qt visualisation support.\nLab 2 — First Simulation: Building and Running B1 Compile Geant4’s B1 example, run it interactively (Qt GUI) and in batch mode via macros, and modify the particle, energy, and event count.\nLab 3 — Acquiring and Analysing Simulation Data Patch B1’s C++ to write per-event energy data to CSV via G4AnalysisManager, then load it in Python with pandas and produce histograms, statistics, and per-particle comparisons.\nLab 4 — A PET Scanner Apply the same workflow to Geant4’s B3a (Positron Emission Tomography) example. Identify the 511 keV photopeak in the energy spectrum, find true coincidences, and reconstruct lines of response.",
+    "text": "The labs\n\nLab 1 — Setting Up Linux and Building Geant4 Install Ubuntu in a virtual machine and build Geant4 from source with Qt visualization support.\nLab 2 — First Simulation: Building and Running B1 Compile Geant4’s B1 example, run it interactively (Qt GUI) and in batch mode via macros, and modify the particle, energy, and event count.\nLab 3 — Acquiring and Analyzing Simulation Data Patch B1’s C++ to write per-event energy data to CSV via G4AnalysisManager, then load it in Python with pandas and produce histograms, statistics, and per-particle comparisons.\nLab 4 — A PET Scanner Apply the same workflow to Geant4’s B3a (Positron Emission Tomography) example. Identify the 511 keV photopeak in the energy spectrum, find true coincidences, and reconstruct lines of response.",
     "crumbs": [
       "Home",
       "Introduction"
@@ -480,7 +480,7 @@
     "href": "index.html#what-youll-build",
     "title": "Geant4 Radiation Labs",
     "section": "What you’ll build",
-    "text": "What you’ll build\nBy the end of the series you will have:\n\nA reproducible Geant4 + Python development environment\nModified Geant4 applications that emit clean CSV data\nPython scripts that compute statistics and produce publication-style plots\nA working understanding of the simulate → save → analyse → visualise loop that underlies most computational physics",
+    "text": "What you’ll build\nBy the end of the series you will have:\n\nA reproducible Geant4 + Python development environment\nModified Geant4 applications that emit clean CSV data\nPython scripts that compute statistics and produce publication-style plots\nA working understanding of the simulate → save → analyze → visualize loop that underlies most computational physics",
     "crumbs": [
       "Home",
       "Introduction"
