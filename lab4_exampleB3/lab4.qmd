@@ -236,9 +236,10 @@ plt.axvline(511, color='red', linestyle='--', linewidth=1.5,
 
 plt.title('PET Detector Crystal Energy Spectrum')
 plt.xlabel('Energy Deposited per Hit (keV)')
-plt.ylabel('Counts')
+plt.ylabel('Counts (log scale)')
+plt.yscale('log')
 plt.legend()
-plt.grid(True, alpha=0.3)
+plt.grid(True, alpha=0.3, which='both')
 plt.tight_layout()
 plt.savefig('pet_spectrum.png', dpi=200)
 print("Spectrum saved to pet_spectrum.png")
