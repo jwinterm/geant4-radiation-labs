@@ -42,4 +42,4 @@ John Murphy and Steven Carlson, with support from Cecil College.
 
 ## Inquiries
 
-Want on-site delivery, customization, or accredited continuing-ed packaging built on top of these openly-licensed materials? [such.software](https://such.software) — an independent provider co-founded by one of the authors — offers commercial services. Email [info@such.software](mailto:info@such.software).
+Want on-site delivery, customization, or instructor materials built on top of these openly-licensed materials? [such.software](https://such.software) — an independent provider co-founded by one of the authors — offers commercial services. Email [john@such.software](mailto:john@such.software).

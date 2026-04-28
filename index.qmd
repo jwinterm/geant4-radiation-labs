@@ -45,7 +45,7 @@ By the end of the series you will have:
 
 ## Adopting these labs
 
-Free to adopt under the licenses below. If you'd like on-site delivery, customization, instructor materials, or accredited continuing-ed packaging built on top of these labs, [such.software](https://such.software) — an independent provider co-founded by one of the authors — offers commercial services. Email [info@such.software](mailto:info@such.software).
+Free to adopt under the licenses below. If you'd like on-site delivery, customization, or instructor materials built on top of these labs, [such.software](https://such.software) — an independent provider co-founded by one of the authors — offers commercial services. Email [john@such.software](mailto:john@such.software).
 
 ## Acknowledgements
 
