@@ -34,12 +34,12 @@ This repository uses a dual license:
 - **Code** (Python, C++ snippets, Quarto/YAML config, diagram-generation scripts) is licensed under the [MIT License](LICENSE).
 - **Lab content** (prose, diagrams, screenshots, generated figures) is licensed under [Creative Commons Attribution 4.0 International (CC-BY-4.0)](LICENSE-CONTENT).
 
-In short: use, modify, redistribute, and even commercialize freely — just keep attribution to such.software and the lab authors.
-
-## Instructors and inquiries
-
-Using these labs in a course, want a customized version, or interested in CE-accredited or on-site delivery? Email [info@such.software](mailto:info@such.software).
+Copyright © 2026 John Murphy, Steven Carlson, and Cecil College. Use, modify, redistribute, and even commercialize freely — just keep attribution.
 
 ## Authors
 
-John Murphy and Steven Carlson · [such.software](https://such.software)
+John Murphy and Steven Carlson, with support from Cecil College.
+
+## Inquiries
+
+Want on-site delivery, customization, or accredited continuing-ed packaging built on top of these openly-licensed materials? [such.software](https://such.software) — an independent provider co-founded by one of the authors — offers commercial services. Email [info@such.software](mailto:info@such.software).

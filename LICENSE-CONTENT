@@ -1,6 +1,6 @@
 Creative Commons Attribution 4.0 International (CC-BY-4.0)
 
-Copyright (c) 2026 such.software
+Copyright (c) 2026 John Murphy, Steven Carlson, and Cecil College
 
 The lab prose, diagrams, screenshots, generated PNG figures, and other
 non-code content of this repository are licensed under the Creative Commons
@@ -46,6 +46,6 @@ It does NOT apply to:
 
 A suggested attribution string for academic use:
 
-  Murphy, J. and Carlson, S. (2026). "Geant4 Radiation Labs."
-  such.software. https://jwinterm.github.io/geant4-radiation-labs/
+  Murphy, J., Carlson, S., and Cecil College (2026). "Geant4 Radiation
+  Labs." https://jwinterm.github.io/geant4-radiation-labs/
   Licensed under CC-BY-4.0.
