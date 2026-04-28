@@ -487,11 +487,33 @@
     ]
   },
   {
+    "objectID": "index.html#instructors-and-inquiries",
+    "href": "index.html#instructors-and-inquiries",
+    "title": "Geant4 Radiation Labs",
+    "section": "Instructors and inquiries",
+    "text": "Instructors and inquiries\nAdopting these labs in a course? Want a customized variant, instructor materials, or on-site / CE-accredited delivery? Reach out: info@such.software.",
+    "crumbs": [
+      "Home",
+      "Introduction"
+    ]
+  },
+  {
     "objectID": "index.html#acknowledgements",
     "href": "index.html#acknowledgements",
     "title": "Geant4 Radiation Labs",
     "section": "Acknowledgements",
     "text": "Acknowledgements\nWith support from Kayla Ross, Veronica Dougherty, and Cecil College.",
+    "crumbs": [
+      "Home",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "index.html#license",
+    "href": "index.html#license",
+    "title": "Geant4 Radiation Labs",
+    "section": "License",
+    "text": "License\nThe labs are openly licensed:\n\nCode (Python, C++, scripts, Quarto config) — MIT License\nContent (prose, diagrams, screenshots) — CC-BY-4.0\n\nUse, adapt, and redistribute freely with attribution to such.software and the lab authors.",
     "crumbs": [
       "Home",
       "Introduction"
