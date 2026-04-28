@@ -487,11 +487,11 @@
     ]
   },
   {
-    "objectID": "index.html#instructors-and-inquiries",
-    "href": "index.html#instructors-and-inquiries",
+    "objectID": "index.html#adopting-these-labs",
+    "href": "index.html#adopting-these-labs",
     "title": "Geant4 Radiation Labs",
-    "section": "Instructors and inquiries",
-    "text": "Instructors and inquiries\nAdopting these labs in a course? Want a customized variant, instructor materials, or on-site / CE-accredited delivery? Reach out: info@such.software.",
+    "section": "Adopting these labs",
+    "text": "Adopting these labs\nFree to adopt under the licenses below. If you’d like on-site delivery, customization, instructor materials, or accredited continuing-ed packaging built on top of these labs, such.software — an independent provider co-founded by one of the authors — offers commercial services. Email info@such.software.",
     "crumbs": [
       "Home",
       "Introduction"
@@ -513,7 +513,7 @@
     "href": "index.html#license",
     "title": "Geant4 Radiation Labs",
     "section": "License",
-    "text": "License\nThe labs are openly licensed:\n\nCode (Python, C++, scripts, Quarto config) — MIT License\nContent (prose, diagrams, screenshots) — CC-BY-4.0\n\nUse, adapt, and redistribute freely with attribution to such.software and the lab authors.",
+    "text": "License\nCopyright © 2026 John Murphy, Steven Carlson, and Cecil College.\nThe labs are openly licensed:\n\nCode (Python, C++, scripts, Quarto config) — MIT License\nContent (prose, diagrams, screenshots) — CC-BY-4.0\n\nUse, adapt, and redistribute freely with attribution to the authors and Cecil College.",
     "crumbs": [
       "Home",
       "Introduction"
