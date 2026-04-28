@@ -27,6 +27,19 @@ To regenerate a single lab as PDF:
 quarto render lab1_setup/lab1.qmd --to pdf
 ```
 
+## License
+
+This repository uses a dual license:
+
+- **Code** (Python, C++ snippets, Quarto/YAML config, diagram-generation scripts) is licensed under the [MIT License](LICENSE).
+- **Lab content** (prose, diagrams, screenshots, generated figures) is licensed under [Creative Commons Attribution 4.0 International (CC-BY-4.0)](LICENSE-CONTENT).
+
+In short: use, modify, redistribute, and even commercialize freely — just keep attribution to such.software and the lab authors.
+
+## Instructors and inquiries
+
+Using these labs in a course, want a customized version, or interested in CE-accredited or on-site delivery? Email [info@such.software](mailto:info@such.software).
+
 ## Authors
 
-John Murphy and Steven Carlson
+John Murphy and Steven Carlson · [such.software](https://such.software)

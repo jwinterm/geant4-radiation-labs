@@ -43,9 +43,22 @@ By the end of the series you will have:
 - Python scripts that compute statistics and produce publication-style plots
 - A working understanding of the **simulate → save → analyze → visualize** loop that underlies most computational physics
 
+## Instructors and inquiries
+
+Adopting these labs in a course? Want a customized variant, instructor materials, or on-site / CE-accredited delivery? Reach out: [info@such.software](mailto:info@such.software).
+
 ## Acknowledgements
 
 With support from Kayla Ross, Veronica Dougherty, and Cecil College.
+
+## License
+
+The labs are openly licensed:
+
+- **Code** (Python, C++, scripts, Quarto config) — [MIT License](https://github.com/jwinterm/geant4-radiation-labs/blob/main/LICENSE)
+- **Content** (prose, diagrams, screenshots) — [CC-BY-4.0](https://github.com/jwinterm/geant4-radiation-labs/blob/main/LICENSE-CONTENT)
+
+Use, adapt, and redistribute freely with attribution to such.software and the lab authors.
 
 ## Source and PDFs
 
