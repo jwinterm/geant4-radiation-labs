@@ -55,7 +55,7 @@ The labs are openly licensed:
 - **Code** (Python, C++, scripts, Quarto config) — [MIT License](https://github.com/jwinterm/geant4-radiation-labs/blob/main/LICENSE)
 - **Content** (prose, diagrams, screenshots) — [CC-BY-4.0](https://github.com/jwinterm/geant4-radiation-labs/blob/main/LICENSE-CONTENT)
 
-Use, adapt, and redistribute freely with attribution to the authors and Cecil College.
+Use, adapt, and redistribute freely with attribution to the authors.
 
 ## Source and PDFs
 
