@@ -47,13 +47,8 @@ By the end of the series you will have:
 
 Free to adopt under the licenses below. If you'd like on-site delivery, customization, or instructor materials built on top of these labs, [such.software](https://such.software) — an independent provider co-founded by one of the authors — offers commercial services. Email [john@such.software](mailto:john@such.software).
 
-## Acknowledgements
-
-With support from Kayla Ross, Veronica Dougherty, and Cecil College.
 
 ## License
-
-Copyright © 2026 John Murphy, Steven Carlson, and Cecil College.
 
 The labs are openly licensed:
 
