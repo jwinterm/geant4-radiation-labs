@@ -502,7 +502,7 @@
     "href": "index.html#license",
     "title": "Geant4 Radiation Labs",
     "section": "License",
-    "text": "License\nThe labs are openly licensed:\n\nCode (Python, C++, scripts, Quarto config) — MIT License\nContent (prose, diagrams, screenshots) — CC-BY-4.0\n\nUse, adapt, and redistribute freely with attribution to the authors and Cecil College.",
+    "text": "License\nThe labs are openly licensed:\n\nCode (Python, C++, scripts, Quarto config) — MIT License\nContent (prose, diagrams, screenshots) — CC-BY-4.0\n\nUse, adapt, and redistribute freely with attribution to the authors.",
     "crumbs": [
       "Home",
       "Introduction"
