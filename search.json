@@ -498,22 +498,11 @@
     ]
   },
   {
-    "objectID": "index.html#acknowledgements",
-    "href": "index.html#acknowledgements",
-    "title": "Geant4 Radiation Labs",
-    "section": "Acknowledgements",
-    "text": "Acknowledgements\nWith support from Kayla Ross, Veronica Dougherty, and Cecil College.",
-    "crumbs": [
-      "Home",
-      "Introduction"
-    ]
-  },
-  {
     "objectID": "index.html#license",
     "href": "index.html#license",
     "title": "Geant4 Radiation Labs",
     "section": "License",
-    "text": "License\nCopyright © 2026 John Murphy, Steven Carlson, and Cecil College.\nThe labs are openly licensed:\n\nCode (Python, C++, scripts, Quarto config) — MIT License\nContent (prose, diagrams, screenshots) — CC-BY-4.0\n\nUse, adapt, and redistribute freely with attribution to the authors and Cecil College.",
+    "text": "License\nThe labs are openly licensed:\n\nCode (Python, C++, scripts, Quarto config) — MIT License\nContent (prose, diagrams, screenshots) — CC-BY-4.0\n\nUse, adapt, and redistribute freely with attribution to the authors and Cecil College.",
     "crumbs": [
       "Home",
       "Introduction"
